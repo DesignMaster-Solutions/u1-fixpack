@@ -111,3 +111,7 @@ Next: validate both patches on a physical U1 before any upstream offer.
 M2b #18: status is now the stock last_fan_value set when the PWM is scheduled (mainline Klipper semantics); the status queue is gone.
 Checks: pending status 0.0 and post-M400 status 1.0; status-never-updates and status-too-early mutants red, patch green, PWM 10.047 ms.
 CI green on `689f315` (run 41671140916) with the #22 full-print proof unchanged.
+
+M2c #18 (review, 03/11): our mutant `18-m107-immediate` (patch with M107 on the main fan left immediate) passed every M106 check.
+New fixture `issue18-m107.gcode`: fan off edge -4266.239 ms on `93cb12f`, +10.047 ms patched, mutant -4216.239 ms = red.
+Evidence: docs/evidence/issue-18/m107/, docs/evidence/issue-18/mutant-m107-immediate/.

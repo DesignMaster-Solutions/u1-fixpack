@@ -41,3 +41,14 @@ Results, PWM on time (10.047 ms) in all three patched variants:
   tests/mutants/18-status-too-early.patch     red, pending_status (status=1.0 at parse time)
 Outputs: patched.txt, mutant-status-never-updates/patched.txt, mutant-status-too-early/patched.txt
 (each ends with status_checks_failed=...).
+
+Review 2, 03/11/2026: the M107 half of the issue title. Mutant
+tests/mutants/18-m107-immediate.patch = the patch with `self.fan.set_speed_from_command(0.)`
+kept in cmd_M107 for the main fan. Against the M106 fixture it SURVIVED every check
+(status_checks_failed=none, fan_minus_step_ms=10.047, within the 12 ms tolerance): the fixture
+never sends M107. New fixture tests/fixtures/issue18-m107.gcode (fan on, M400, travel, M107,
+extrusion). Off edge of the PWM vs first e0 step of the extrusion that follows:
+  93cb12f (stock)            -4266.239 ms  (fan stops while the head is still traveling)
+  patch                      +10.047 ms    (green, tolerance 12.0 ms)
+  18-m107-immediate mutant   -4216.239 ms  (red)
+Outputs: m107/baseline.txt, m107/patched.txt, mutant-m107-immediate/patched.txt.
