@@ -3,6 +3,10 @@
 Reproduce, fix and regression-test open bugs in Snapmaker's U1 firmware
 (`Snapmaker/u1-klipper`), on the real firmware code, with no printer on the desk.
 
+Entered in the Snapmaker Innovation Fund, Phase 2:
+[U1 Fix Pack on the Snapmaker forum](https://forum.snapmaker.com/t/44036). If you
+try a patch on a physical U1, please report it there or in an issue here, either way.
+
 Each bug in this pack gets three things:
 
 1. **A reproduction that fails on the shipped firmware.** The test runs
