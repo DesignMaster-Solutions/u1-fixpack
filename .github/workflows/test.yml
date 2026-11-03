@@ -11,3 +11,5 @@ jobs:
         run: |
           python3 tests/run_issue22.py
           python3 tests/run_issue18.py
+      - name: Full print, real Pause/Resume (stock red, patched green, mutants red)
+        run: sh tests/prove.sh u1-fixpack:local

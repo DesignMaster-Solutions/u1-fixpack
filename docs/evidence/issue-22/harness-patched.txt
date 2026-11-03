@@ -1,0 +1,44 @@
+firmware: u1-klipper 93cb12f, FIXPACK_PATCHES=all
+expected: pass; unittest exit code: 0 (ok)
+
+test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move) ... Checking patch klippy/extras/fan.py...
+Hunk #5 succeeded at 182 (offset 1 line).
+Hunk #6 succeeded at 213 (offset 1 line).
+Hunk #7 succeeded at 227 (offset 1 line).
+Checking patch klippy/extras/virtual_sdcard.py...
+Checking patch klippy/extras/fan_generic.py...
+Applied patch klippy/extras/fan.py cleanly.
+Applied patch klippy/extras/virtual_sdcard.py cleanly.
+Applied patch klippy/extras/fan_generic.py cleanly.
+Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+ok
+test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put) ... Checking patch klippy/extras/fan.py...
+Hunk #5 succeeded at 182 (offset 1 line).
+Hunk #6 succeeded at 213 (offset 1 line).
+Hunk #7 succeeded at 227 (offset 1 line).
+Checking patch klippy/extras/virtual_sdcard.py...
+Checking patch klippy/extras/fan_generic.py...
+Applied patch klippy/extras/fan.py cleanly.
+Applied patch klippy/extras/virtual_sdcard.py cleanly.
+Applied patch klippy/extras/fan_generic.py cleanly.
+Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+ok
+test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print) ... Checking patch klippy/extras/fan.py...
+Hunk #5 succeeded at 182 (offset 1 line).
+Hunk #6 succeeded at 213 (offset 1 line).
+Hunk #7 succeeded at 227 (offset 1 line).
+Checking patch klippy/extras/virtual_sdcard.py...
+Checking patch klippy/extras/fan_generic.py...
+Applied patch klippy/extras/fan.py cleanly.
+Applied patch klippy/extras/virtual_sdcard.py cleanly.
+Applied patch klippy/extras/fan_generic.py cleanly.
+Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.765s
+
+OK

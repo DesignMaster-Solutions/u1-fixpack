@@ -1,0 +1,26 @@
+Mutant for the mutant check: the first #22 patch in this repo (commit 7a6cc7a). It resets
+only while the offset is non-zero, so on a multi-leg park the later legs keep a stale reference.
+
+From: Alan de Bortolo <info@designmastersolutions.com>
+Subject: [PATCH] exclude_object: clear stale XYZ offset after manual move
+
+Issue reported by the Snapmaker/u1-klipper#22 reporter. A pause park uses
+toolhead.manual_move() outside the exclude-object transform. When that changes
+the physical XYZ position, discard the stale excluded-object XYZ offset before
+gcode_move resets its position. Keep the extrusion offset unchanged.
+
+--- a/klippy/extras/exclude_object.py
++++ b/klippy/extras/exclude_object.py
+@@ -148,6 +148,12 @@ class ExcludeObject:
+     def get_position(self):
+         offset = self._get_extrusion_offsets()
+         pos = self.next_transform.get_position()
++        if (offset[0] != 0. or offset[1] != 0. or offset[2] != 0.) \
++                and pos[:3] != self.last_position_extruded[:3]:
++            # A manual move bypassed this transform; its old XYZ offset no
++            # longer describes the physical position.
++            offset[:3] = [0., 0., 0.]
++            self.last_position_extruded[:3] = pos[:3]
+         self._get_last_position_e()
+         for i in range(4):
+             self.last_position[i] = pos[i] + offset[i]

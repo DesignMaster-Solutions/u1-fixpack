@@ -1,0 +1,37 @@
+Console output of u1-klipper 93cb12f (stock) printing tests/issue22/pause_resume.gcode via harness/run.py
+
+// Klipper state: Ready
+// Power loss module not detected, Power resume has been disabled
+File opened:print.gcode Size:4783
+File selected
+// Success: Changed main state to PRINTING
+// Excluding object B
+FIXPACK: user presses Pause
+// Pausing...
+// M107: Unsupported fan ID: 3
+// idle_timeout: Timeout set to 9999999999.00 s
+// mcu: stepper_x:109862 stepper_y:-81062 stepper_z:-323280
+// stepper: stepper_x:343.318750 stepper_y:-253.318750 stepper_z:5.600000
+// kinematic: X:45.000000 Y:298.318750 Z:5.600000
+// toolhead: X:45.000000 Y:300.500000 Z:5.600000 E:22.288000
+// gcode: X:33.000000 Y:448.500000 Z:5.800000 E:48.432000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:44.352000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+echo: extruder0 temp : 220.0
+echo: extruder1 temp : 0.0
+echo: extruder2 temp : 0.0
+echo: extruder3 temp : 0.0
+echo: bed temp : 60.0
+echo: last extruder index :
+// Success: Set action code IDLE
+FIXPACK: user presses Resume
+// Resuming...
+// Success: Set action code PRINT_RESUMING
+echo: last extruder temp is 220.0, last extruder index is 0
+// extruder -> extruder
+// Extruder extruder already active
+// idle_timeout: Timeout set to 9999999999.00 s
+// !! Resumes error!
+// Success: Set action code IDLE
+!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]
+// Klipper state: Disconnect
