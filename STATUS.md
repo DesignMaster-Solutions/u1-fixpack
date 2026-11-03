@@ -75,7 +75,8 @@
   corresponding `*-mcu-e0.txt` files contain the command clocks and decoded
   MCU output; `mutant-status-*/` hold the status mutant runs.
 - **CI:** green on commit `4d3b404` (workflow run
-  [41656457009](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41656457009)).
+  [41656457009](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41656457009)); the M2b patch and status checks green on `689f315` (run
+  [41671140916](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41671140916)).
 
 - **Review with our own mutant (03/11), closed in M2b:** the first patch reported
   status from a queue that drains only when `estimated_print_time()` passes the
@@ -106,3 +107,7 @@ M2 #18: fan timing moves from 4366.239 ms early to 10.047 ms after first step.
 CI: green for both on `d590c9c` (#22 full-print proof added) after `4d3b404` (#18).
 M3 #8: not attempted; batch mode cannot prove the physical runout trigger.
 Next: validate both patches on a physical U1 before any upstream offer.
+
+M2b #18: status is now the stock last_fan_value set when the PWM is scheduled (mainline Klipper semantics); the status queue is gone.
+Checks: pending status 0.0 and post-M400 status 1.0; status-never-updates and status-too-early mutants red, patch green, PWM 10.047 ms.
+CI green on `689f315` (run 41671140916) with the #22 full-print proof unchanged.
