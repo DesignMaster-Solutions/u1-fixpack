@@ -19,7 +19,7 @@ on top of custom firmware builds.
 
 | Issue | What U1 owners see | Status |
 |---|---|---|
-| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | planned |
+| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patch and red/green/mutant proof; CI pending |
 | [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | planned |
 | [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | planned |
 
@@ -35,6 +35,14 @@ dictionaries for the U1's boards from the Kconfig files in `lava/`, and runs
 Klipper in batch mode. A bug counts as reproduced only when the firmware's own
 output shows it (an error it raises, a position it reports, the time a command is
 scheduled at), never when a mock says so.
+
+`tests/firmware/prep_cfg.py` and `tests/firmware/dryrun_tracer.py` are derived
+from U1 Dry Run under the same GPL-3.0 license. The issue #22 fixture exercises
+the stock `EXCLUDE_OBJECT`, pause park, and E-only resume paths. Because batch
+mode has no print lifecycle, `DRYRUN_PRINT_START` calls Klipper's real
+`print_stats.note_start()`; hardware-only sensor sections are omitted by the
+config preparer. The emitted position and range error still come from the real
+firmware code.
 
 ## Limits
 

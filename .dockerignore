@@ -1,0 +1,6 @@
+.git
+docs/evidence
+harness
+out
+__pycache__
+*.pyc

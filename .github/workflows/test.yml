@@ -1,0 +1,11 @@
+name: test
+on: [push, pull_request]
+jobs:
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build pinned U1 firmware runner
+        run: docker build -t u1-fixpack:local .
+      - name: Run issue regressions
+        run: python3 tests/run_issue22.py
