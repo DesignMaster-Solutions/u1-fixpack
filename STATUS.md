@@ -41,15 +41,25 @@
 - **Evidence:** `docs/evidence/issue-18/{baseline,patched,mutant}.txt` and the
   corresponding `*-mcu-e0.txt` files contain the command clocks and decoded
   MCU output.
-- **CI:** pending for the M2 test.
+- **CI:** green on commit `4d3b404` (workflow run
+  [41656457009](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41656457009)).
 
 ## Remaining
 
-- M3: investigate #8 only if it reproduces at the firmware boundary without
-  simulating the runout defect.
 - Physical U1 validation remains to be done before offering the patches upstream.
 
 ## Open questions
 
-- Can #8 be reproduced at the firmware boundary without faking the runout
-  sensor state? It remains conditional and untested.
+- #8 was not attempted. Its reported trigger requires a detected physical runout
+  followed by loading the same spool. Batch mode has no filament sensor; setting
+  `IS_RUNOUT=1` by hand would inject the trigger instead of proving the sensor
+  path. No non-mocked firmware-boundary reproduction was established, so M3
+  remains conditional under the brief.
+
+## Five-line summary
+
+M1 #22: patch verified red/green/mutant on firmware `93cb12f`.
+M2 #18: fan timing moves from 4366.239 ms early to 10.047 ms after first step.
+CI: green for both regressions on commits `7a6cc7a` and `4d3b404`.
+M3 #8: not attempted; batch mode cannot prove the physical runout trigger.
+Next: validate both patches on a physical U1 before any upstream offer.
