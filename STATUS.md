@@ -72,6 +72,14 @@
 - **CI:** green on commit `4d3b404` (workflow run
   [41656457009](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41656457009)).
 
+- **Review with our own mutant (03/11):** `tests/mutants/18-status-never-updates.patch`
+  (fan PWM still on time, status never shows the new speed) passes every check in
+  `tests/run_issue18.py`. Batch mode's file-output MCU returns `estimated_print_time() = 0`
+  (`klippy/mcu.py:735`), so the patch's status queue never drains there and the status claim
+  above is untested. Next: report status like mainline Klipper (value as soon as the PWM is
+  scheduled), assert it after `M400`, keep this mutant red. Detail:
+  `docs/evidence/issue-18/review-status-mutant.txt`.
+
 ## Remaining
 
 - Physical U1 validation remains to be done before offering the patches upstream.

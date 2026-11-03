@@ -1,0 +1,30 @@
+U1 Fix Pack, review of M2 (#18) with a mutant of our own, 03/11/2026.
+
+Mutant: tests/mutants/18-status-never-updates.patch = patches/0018-fan-gcode-motion-sync.patch
+without `self.scheduled_values.append((print_time, value))` in Fan.set_speed(). The PWM is still
+scheduled with the motion, but get_status() never reports the new speed: Fluidd, the screen and
+anything reading printer.fan.speed keep showing the old value.
+
+Result against the checks in tests/run_issue18.py (fixture tests/fixtures/issue18.gcode, sha256
+27571c9c96a8fca84d64ac9407d7d974ad57bb193db2078dbeee8473a3ee931d): SURVIVES.
+  expected diag "requested=1.0 status=0.0 saved=1.0": present
+  fan_minus_step_ms=10.047 with tolerance 12.0: within
+Firmware output of the mutant run:
+firmware_error_count=0
+11-03 16:00:34.315:DRYRUN fan requested=0.0 status=0.0 saved=None scheduled_time=0.0
+11-03 16:00:34.315:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0
+11-03 16:00:34.316:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0
+
+Why the test cannot see it: in batch mode Klipper's file-output MCU replaces
+estimated_print_time() with a function that returns 0 (klippy/mcu.py:735 at 93cb12f). The patch's
+scheduled_values queue only drains when estimated_print_time() passes the scheduled time, so the
+real patch also reports status 0.0 for the whole run. Tried and dropped: M400 then the status
+60 s later, and M400 then the status at last_move_time + 1 s converted through the MCU clock;
+both still read 0.0 for the real patch, so neither separates it from this mutant.
+The claim "status reports a fan value only after its scheduled print time is reached" is
+therefore untested in this repo.
+
+Next: report status the way mainline Klipper does (fan.py last_req_value: the new value as soon as
+the lookahead callback schedules the PWM), which removes the queue (it only drains when someone
+reads the status) and which batch mode can observe after M400. Then assert the status after M400
+and keep this mutant red.
