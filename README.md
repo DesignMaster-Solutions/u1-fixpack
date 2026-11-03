@@ -20,7 +20,7 @@ on top of custom firmware builds.
 | Issue | What U1 owners see | Status |
 |---|---|---|
 | [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`) |
-| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof; CI green at `4d3b404` |
+| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof (PWM clock plus fan status, 2 status mutants red); see STATUS.md for CI |
 | [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
 
 Credit for finding and describing each bug goes to the people who filed the
@@ -40,6 +40,11 @@ The #18 regression decodes the e0 MCU output with Klipper's `parsedump.py` and
 the U1 `at32f415_config.dict`. It compares the fan PWM clock with the first
 extruder step clock in the move after `M106`; the 12 ms tolerance is two 5 ms
 PWM cycles plus 2 ms for step and scheduling quantization.
+It also checks the fan status the firmware reports: with the patch, status still
+shows the old speed while the move is queued, and shows the new one after `M400`
+(the PWM is then scheduled), as mainline Klipper does. Two mutants that keep the
+PWM on time but get the status wrong (never updated, updated at parse time) must
+fail those checks.
 
 `tests/firmware/prep_cfg.py` and `tests/firmware/dryrun_tracer.py` are derived
 from U1 Dry Run under the same GPL-3.0 license. The issue #22 fixture exercises

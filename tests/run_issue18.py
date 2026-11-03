@@ -12,26 +12,46 @@ PATCH = "/work/patches/0018-fan-gcode-motion-sync.patch"
 TOLERANCE_MS = 12.0
 
 
-def run_mode(mode):
+MUTANTS = {
+    # name: the check that must catch it
+    "status-never-updates": "final_status",
+    "status-too-early": "pending_status",
+}
+
+
+def run_mode(mode, patch=PATCH, evidence=EVIDENCE):
     command = [
         "docker", "run", "--rm", "-v", f"{ROOT}:/work", IMAGE,
-        "--mode", mode, "--gcode", FIXTURE, "--patch", PATCH,
-        "--evidence", "/work/docs/evidence/issue-18", "--decode-e0",
+        "--mode", mode, "--gcode", FIXTURE, "--patch", patch,
+        "--evidence", "/work/" + str(evidence.relative_to(ROOT)), "--decode-e0",
     ]
     if mode == "baseline":
-        command = [part for part in command if part not in ("--patch", PATCH)]
+        command = [part for part in command if part not in ("--patch", patch)]
     completed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True,
                                timeout=180)
     if completed.returncode:
         raise AssertionError("%s runner failed:\n%s\n%s" %
                              (mode, completed.stdout, completed.stderr))
-    summary = (EVIDENCE / (mode + ".txt")).read_text()
-    decoded = (EVIDENCE / (mode + "-mcu-e0.txt")).read_text()
+    summary = (evidence / (mode + ".txt")).read_text()
+    decoded = (evidence / (mode + "-mcu-e0.txt")).read_text()
+    return summary, decoded
+
+
+def status_failures(mode, summary):
+    """Status checks; returns the names of the checks that fail."""
+    failed = []
+    # Patched: after M106 S255 the move is still in the lookahead queue, so the
+    # PWM is not scheduled yet and status must still show the old speed.
     expected_diag = ("DRYRUN fan requested=1.0 status=0.0 saved=1.0"
                      if mode == "patched" else
                      "DRYRUN fan requested=1.0 status=1.0 saved=1.0")
-    assert expected_diag in summary, summary
-    return summary, decoded
+    if expected_diag not in summary:
+        failed.append("pending_status")
+    # After M400 the PWM is scheduled in every mode: status must show it.
+    diags = [line for line in summary.splitlines() if "DRYRUN fan requested=" in line]
+    if not diags or "status=1.0 " not in diags[-1]:
+        failed.append("final_status")
+    return failed
 
 
 def parse_result(summary, decoded):
@@ -87,8 +107,8 @@ def parse_result(summary, decoded):
     }
 
 
-def record(mode, metrics):
-    path = EVIDENCE / (mode + ".txt")
+def record(mode, metrics, evidence=EVIDENCE):
+    path = evidence / (mode + ".txt")
     with path.open("a") as out:
         out.write("fan_pin=PB3 fan_oid=%d\n" % metrics["fan_oid"])
         out.write("e_step_pin=PA8 e_step_oid=%d\n" % metrics["e_oid"])
@@ -105,6 +125,8 @@ def main():
     results = {}
     for mode in ("baseline", "patched", "mutant"):
         summary, decoded = run_mode(mode)
+        failed = status_failures(mode, summary)
+        assert not failed, (mode, failed, summary)
         results[mode] = parse_result(summary, decoded)
         record(mode, results[mode])
 
@@ -115,6 +137,23 @@ def main():
     assert abs(patched["delta_ms"]) <= TOLERANCE_MS, patched
     assert mutant["delta_ms"] == baseline["delta_ms"], (baseline, mutant)
     assert patched["pwm_cycle_ticks"] == 720000  # 5 ms on the U1 e0 MCU
+
+    # Status mutants keep the PWM on time; only the status checks may catch them.
+    for name, catcher in MUTANTS.items():
+        evidence = EVIDENCE / ("mutant-" + name)
+        evidence.mkdir(parents=True, exist_ok=True)
+        summary, decoded = run_mode(
+            "patched", "/work/tests/mutants/18-%s.patch" % name, evidence)
+        failed = status_failures("patched", summary)
+        metrics = parse_result(summary, decoded)
+        record("patched", metrics, evidence)
+        with (evidence / "patched.txt").open("a") as out:
+            out.write("status_checks_failed=%s expected=%s\n" %
+                      (",".join(failed) or "none", catcher))
+        assert abs(metrics["delta_ms"]) <= TOLERANCE_MS, (name, metrics)
+        assert catcher in failed, (name, failed, summary)
+        print("mutant %s: red (%s)" % (name, ",".join(failed)))
+
     print("issue #18 red/green/mutant: PASS; "
           "baseline %.3f ms, patched %.3f ms, tolerance %.1f ms" %
           (baseline["delta_ms"], patched["delta_ms"], TOLERANCE_MS))

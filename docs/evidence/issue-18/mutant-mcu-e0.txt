@@ -29,13 +29,13 @@ query_counter oid=2 clock=146880000 poll_ticks=72000 sample_ticks=144000000
 query_analog_in oid=13 clock=162720000 sample_ticks=144000 sample_count=8 rest_ticks=43200000 min_value=619 max_value=32484 range_check_count=4
 queue_digital_out oid=14 clock=28800000 on_ticks=0
 queue_digital_out oid=8 clock=43200000 on_ticks=720000
-queue_digital_out oid=15 clock=673385225 on_ticks=0
 set_next_step_dir oid=5 dir=1
 queue_step oid=5 interval=671938467 count=1 add=0 line=4294967295
 queue_step oid=5 interval=621262 count=1 add=0 line=4294967295
 queue_step oid=5 interval=376080 count=1 add=0 line=4294967295
 queue_step oid=5 interval=285091 count=1 add=0 line=4294967295
 queue_step oid=5 interval=232243 count=3 add=-26544 line=4294967295
+queue_digital_out oid=15 clock=673385225 on_ticks=0
 queue_step oid=5 interval=168230 count=4 add=-8658 line=4294967295
 queue_step oid=5 interval=134724 count=9 add=-2671 line=4294967295
 queue_step oid=5 interval=113938 count=12 add=-357 line=4294967295

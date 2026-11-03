@@ -28,3 +28,16 @@ Next: report status the way mainline Klipper does (fan.py last_req_value: the ne
 the lookahead callback schedules the PWM), which removes the queue (it only drains when someone
 reads the status) and which batch mode can observe after M400. Then assert the status after M400
 and keep this mutant red.
+
+Closed in M2b, 03/11/2026. The patch no longer keeps a status queue: get_status() returns the
+stock last_fan_value, which the lookahead callback sets when it schedules the PWM (mainline
+Klipper's last_req_value point). The fixture now ends with M400 and DRYRUN_FAN_DIAG, and
+tests/run_issue18.py checks two things on every run (fixture sha256 212dae43...):
+  pending_status: patched shows "requested=1.0 status=0.0 saved=1.0" while the move is queued
+  final_status:   the last diag after M400 shows status=1.0 (baseline and patched)
+Results, PWM on time (10.047 ms) in all three patched variants:
+  patch                                       green (no check fails)
+  tests/mutants/18-status-never-updates.patch red, final_status  (last diag status=0.0)
+  tests/mutants/18-status-too-early.patch     red, pending_status (status=1.0 at parse time)
+Outputs: patched.txt, mutant-status-never-updates/patched.txt, mutant-status-too-early/patched.txt
+(each ends with status_checks_failed=...).

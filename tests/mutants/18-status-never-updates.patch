@@ -1,19 +1,17 @@
 diff --git a/klippy/extras/fan.py b/klippy/extras/fan.py
-index 0964ab0a..578a72c4 100644
+index 0964ab0a..c5525fda 100644
 --- a/klippy/extras/fan.py
 +++ b/klippy/extras/fan.py
-@@ -14,6 +14,10 @@ class Fan:
+@@ -14,6 +14,8 @@ class Fan:
          self.reactor = self.printer.get_reactor()
          self.last_fan_value = 0.
          self.last_fan_time = 0.
-+        self.current_fan_value = 0.
 +        self.requested_fan_value = 0.
 +        self.pending_values = []
-+        self.scheduled_values = []
          self.last_enable_value = 0.
          # Read config
          self.max_power = config.getfloat('max_power', 1., above=0., maxval=1.)
-@@ -49,6 +53,7 @@ class Fan:
+@@ -49,6 +51,7 @@ class Fan:
      def get_mcu(self):
          return self.mcu_fan.get_mcu()
      def set_speed(self, print_time, value, control_enable=True):
@@ -21,15 +19,13 @@ index 0964ab0a..578a72c4 100644
          if value < self.off_below:
              value = 0.
          value = max(0., min(self.max_power, value * self.max_power))
-@@ -75,6 +80,7 @@ class Fan:
-             and (not self.last_fan_value or value - self.last_fan_value > .5)):
-             # Run fan at full speed for specified kick_start_time
-             self.mcu_fan.set_pwm(print_time, self.max_power, FAN_MIN_TIME)
-+            self.scheduled_values.append((print_time, self.max_power))
+@@ -78,12 +81,22 @@ class Fan:
              print_time += self.kick_start_time
          self.mcu_fan.set_pwm(print_time, value, FAN_MIN_TIME)
          self.last_fan_time = print_time
-@@ -84,13 +90,30 @@ class Fan:
+-        self.last_fan_value = value
+     def set_speed_from_command(self, value, control_enable=True):
+         system_time = self.reactor.monotonic()
          system_time += FAN_MIN_TIME
          print_time = self.get_mcu().estimated_print_time(system_time)
          self.set_speed(print_time, value, control_enable)
@@ -47,21 +43,7 @@ index 0964ab0a..578a72c4 100644
      def _handle_request_restart(self, print_time):
          self.set_speed(print_time, 0.)
  
-     def get_status(self, eventtime):
-+        if eventtime is None:
-+            eventtime = self.reactor.monotonic()
-+        print_time = self.get_mcu().estimated_print_time(eventtime)
-+        while (self.scheduled_values
-+               and self.scheduled_values[0][0] <= print_time):
-+            self.current_fan_value = self.scheduled_values.pop(0)[1]
-         tachometer_status = self.tachometer.get_status(eventtime)
-         return {
--            'speed': self.last_fan_value,
-+            'speed': self.current_fan_value,
-             'rpm': tachometer_status['rpm'],
-         }
- 
-@@ -158,12 +181,12 @@ class PrinterFan:
+@@ -158,12 +171,12 @@ class PrinterFan:
  
      def get_all_fan_speed(self):
          fan_speed_dict = {}
@@ -76,7 +58,7 @@ index 0964ab0a..578a72c4 100644
              else:
                  logging.error("No fan found with ID {}".format(fan_id))
          return copy.deepcopy(fan_speed_dict)
-@@ -189,13 +212,13 @@ class PrinterFan:
+@@ -189,13 +202,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:
@@ -92,7 +74,7 @@ index 0964ab0a..578a72c4 100644
      def cmd_M107(self, gcmd):
          # Turn fan off
          fan_id = gcmd.get_int('P', None)
-@@ -203,13 +226,13 @@ class PrinterFan:
+@@ -203,13 +216,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:

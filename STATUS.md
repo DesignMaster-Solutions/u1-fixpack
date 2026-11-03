@@ -64,20 +64,27 @@
 - **Patch:** `patches/0018-fan-gcode-motion-sync.patch`, credited to paxx12's
   suggested lookahead fix. G-code fan commands use the motion queue; webhook
   and tool-change fan calls stay immediate. Requested speeds remain available
-  to saved G-code and power-loss state, while status reports the scheduled
-  speed only after its print time.
+  to saved G-code and power-loss state (`get_requested_speed()`). Status keeps
+  the stock `last_fan_value`, set when the lookahead callback schedules the PWM
+  (mainline Klipper's `last_req_value` point), so it shows the old speed while
+  the move is queued and the new one once the PWM is scheduled.
+- **Status checks (M2b):** the fixture ends with `M400` + `DRYRUN_FAN_DIAG`;
+  `tests/run_issue18.py` requires `status=0.0` while pending (patched) and
+  `status=1.0` on the last diag (baseline and patched).
 - **Evidence:** `docs/evidence/issue-18/{baseline,patched,mutant}.txt` and the
   corresponding `*-mcu-e0.txt` files contain the command clocks and decoded
-  MCU output.
+  MCU output; `mutant-status-*/` hold the status mutant runs.
 - **CI:** green on commit `4d3b404` (workflow run
   [41656457009](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41656457009)).
 
-- **Review with our own mutant (03/11):** `tests/mutants/18-status-never-updates.patch`
-  (fan PWM still on time, status never shows the new speed) passes every check in
-  `tests/run_issue18.py`. Batch mode's file-output MCU returns `estimated_print_time() = 0`
-  (`klippy/mcu.py:735`), so the patch's status queue never drains there and the status claim
-  above is untested. Next: report status like mainline Klipper (value as soon as the PWM is
-  scheduled), assert it after `M400`, keep this mutant red. Detail:
+- **Review with our own mutant (03/11), closed in M2b:** the first patch reported
+  status from a queue that drains only when `estimated_print_time()` passes the
+  scheduled time; batch mode's file-output MCU returns 0 there (`klippy/mcu.py:735`),
+  so its status claim was untested and `tests/mutants/18-status-never-updates.patch`
+  survived. The queue is gone (see Patch). Now, with the PWM on time (10.047 ms) in
+  every run: patch green; `18-status-never-updates` (status never set) red on the
+  final-status check; `18-status-too-early` (status = requested value at parse
+  time) red on the pending check. Detail:
   `docs/evidence/issue-18/review-status-mutant.txt`.
 
 ## Remaining

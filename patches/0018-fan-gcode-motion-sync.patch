@@ -3,25 +3,30 @@ Subject: [PATCH] fan: schedule G-code fan changes with motion
 Suggested-by: paxx12 (Snapmaker/u1-klipper#18)
 
 M106/M107 and SET_FAN_SPEED currently schedule PWM from reactor time, before
-the queued toolhead motion reaches the command. Use lookahead print time for
-G-code commands. Webhooks and tool-change fan control remain immediate.
-Queued requests are visible to state saves, while status reports a fan value
-only after its scheduled print time is reached.
+the queued toolhead motion reaches the command. Use a toolhead lookahead
+callback so G-code fan changes are scheduled at the print time of the
+following move. Webhooks and tool-change fan control remain immediate.
+The fan status keeps the stock 'speed': last_fan_value, which the callback
+updates when it schedules the PWM (the same point at which mainline Klipper
+updates last_req_value), so status does not report a speed that is still
+waiting behind queued moves. Queued requests are visible to state saves
+(SAVE_GCODE_STATE and the power-loss fan record) through
+get_requested_speed().
 
+diff --git a/klippy/extras/fan.py b/klippy/extras/fan.py
+index 0964ab0a..fa0d9d27 100644
 --- a/klippy/extras/fan.py
 +++ b/klippy/extras/fan.py
-@@ -14,6 +14,10 @@
+@@ -14,6 +14,8 @@ class Fan:
          self.reactor = self.printer.get_reactor()
          self.last_fan_value = 0.
          self.last_fan_time = 0.
-+        self.current_fan_value = 0.
 +        self.requested_fan_value = 0.
 +        self.pending_values = []
-+        self.scheduled_values = []
          self.last_enable_value = 0.
          # Read config
          self.max_power = config.getfloat('max_power', 1., above=0., maxval=1.)
-@@ -49,6 +53,7 @@
+@@ -49,6 +51,7 @@ class Fan:
      def get_mcu(self):
          return self.mcu_fan.get_mcu()
      def set_speed(self, print_time, value, control_enable=True):
@@ -29,20 +34,7 @@ only after its scheduled print time is reached.
          if value < self.off_below:
              value = 0.
          value = max(0., min(self.max_power, value * self.max_power))
-@@ -74,5 +79,6 @@
-         if (value and value < self.max_power and self.kick_start_time
-             and (not self.last_fan_value or value - self.last_fan_value > .5)):
-             # Run fan at full speed for specified kick_start_time
-             self.mcu_fan.set_pwm(print_time, self.max_power, FAN_MIN_TIME)
-+            self.scheduled_values.append((print_time, self.max_power))
-             print_time += self.kick_start_time
-@@ -79,18 +85,36 @@
-         self.mcu_fan.set_pwm(print_time, value, FAN_MIN_TIME)
-+        self.scheduled_values.append((print_time, value))
-         self.last_fan_time = print_time
-         self.last_fan_value = value
-     def set_speed_from_command(self, value, control_enable=True):
-         system_time = self.reactor.monotonic()
+@@ -84,6 +87,17 @@ class Fan:
          system_time += FAN_MIN_TIME
          print_time = self.get_mcu().estimated_print_time(system_time)
          self.set_speed(print_time, value, control_enable)
@@ -60,21 +52,7 @@ only after its scheduled print time is reached.
      def _handle_request_restart(self, print_time):
          self.set_speed(print_time, 0.)
  
-     def get_status(self, eventtime):
-+        if eventtime is None:
-+            eventtime = self.reactor.monotonic()
-+        print_time = self.get_mcu().estimated_print_time(eventtime)
-+        while (self.scheduled_values
-+               and self.scheduled_values[0][0] <= print_time):
-+            self.current_fan_value = self.scheduled_values.pop(0)[1]
-         tachometer_status = self.tachometer.get_status(eventtime)
-         return {
--            'speed': self.last_fan_value,
-+            'speed': self.current_fan_value,
-             'rpm': tachometer_status['rpm'],
-         }
- 
-@@ -158,12 +181,12 @@
+@@ -158,12 +172,12 @@ class PrinterFan:
  
      def get_all_fan_speed(self):
          fan_speed_dict = {}
@@ -89,7 +67,7 @@ only after its scheduled print time is reached.
              else:
                  logging.error("No fan found with ID {}".format(fan_id))
          return copy.deepcopy(fan_speed_dict)
-@@ -189,13 +212,13 @@
+@@ -189,13 +203,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:
@@ -105,7 +83,7 @@ only after its scheduled print time is reached.
      def cmd_M107(self, gcmd):
          # Turn fan off
          fan_id = gcmd.get_int('P', None)
-@@ -203,13 +226,13 @@
+@@ -203,13 +217,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:
@@ -121,9 +99,24 @@ only after its scheduled print time is reached.
  
  def load_config(config):
      return PrinterFan(config)
+diff --git a/klippy/extras/fan_generic.py b/klippy/extras/fan_generic.py
+index 425c5ca9..f5bdad55 100644
+--- a/klippy/extras/fan_generic.py
++++ b/klippy/extras/fan_generic.py
+@@ -36,7 +36,7 @@ class PrinterFanGeneric:
+         return self.fan.get_status(eventtime)
+     def cmd_SET_FAN_SPEED(self, gcmd):
+         speed = gcmd.get_float('SPEED', 0.)
+-        self.fan.set_speed_from_command(speed)
++        self.fan.set_speed_from_gcode(speed)
+ 
+ def load_config_prefix(config):
+     return PrinterFanGeneric(config)
+diff --git a/klippy/extras/virtual_sdcard.py b/klippy/extras/virtual_sdcard.py
+index bc847fa0..78f77a1d 100644
 --- a/klippy/extras/virtual_sdcard.py
 +++ b/klippy/extras/virtual_sdcard.py
-@@ -1002,8 +1002,7 @@
+@@ -1002,8 +1002,7 @@ class VirtualSD:
                  # self.gcode.respond_info("fan key: {}".format(key))
                  if fan_obj is not None:
                      curtime = self.reactor.monotonic()
@@ -133,14 +126,3 @@ only after its scheduled print time is reached.
                      fan_state[key] = fan_info[key][1] + ' S{}'.format(fan_value)
          fan_state.update(data_dict)
          self.save_environment_data(self.pl_print_fan_info_env_path, fan_state, sync, flush, safe_write)
---- a/klippy/extras/fan_generic.py
-+++ b/klippy/extras/fan_generic.py
-@@ -36,7 +36,7 @@
-         return self.fan.get_status(eventtime)
-     def cmd_SET_FAN_SPEED(self, gcmd):
-         speed = gcmd.get_float('SPEED', 0.)
--        self.fan.set_speed_from_command(speed)
-+        self.fan.set_speed_from_gcode(speed)
- 
- def load_config_prefix(config):
-     return PrinterFanGeneric(config)
