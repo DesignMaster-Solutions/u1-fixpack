@@ -93,6 +93,7 @@ class DryrunTracer:
                 gcode.register_command(cmd, self._wrap(orig))
         gcode.register_command("DRYRUN_LINE", self._set_line)
         gcode.register_command("DRYRUN_PRINT_START", self._start_print)
+        gcode.register_command("DRYRUN_FAN_DIAG", self._fan_diag)
         orig_error = gcode._respond_error
 
         def respond_error(msg):
@@ -142,6 +143,16 @@ class DryrunTracer:
     def _start_print(self, gcmd):
         # Batch mode has no virtual-SD lifecycle; use the real firmware transition.
         self.printer.lookup_object("print_stats").note_start()
+
+    def _fan_diag(self, gcmd):
+        fan = self.printer.lookup_object("fan").fan
+        saved = self.printer.lookup_object("gcode_move").saved_states.get(
+            "fan_sync_test", {}).get("fan_speed_dict", {}).get("main_fan")
+        requested = getattr(fan, "get_requested_speed", lambda: fan.last_fan_value)()
+        gcmd.respond_info("DRYRUN fan requested=%s status=%s saved=%s scheduled_time=%s" %
+                          (requested,
+                           fan.get_status(self.printer.get_reactor().monotonic())["speed"],
+                           saved, fan.last_fan_time))
 
     def _set_line(self, gcmd):
         self.line = gcmd.get_int("N")

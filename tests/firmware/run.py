@@ -57,8 +57,11 @@ def run(args):
         completed = subprocess.run(command, env=env, text=True, capture_output=True, timeout=120)
         log = log_path.read_text(errors="replace") if log_path.exists() else ""
         trace = trace_path.read_text(errors="replace") if trace_path.exists() else ""
+        e0_config = next((line for line in log.splitlines()
+                          if line.startswith("MCU 'e0' config:")), "")
         error_lines = [line for line in log.splitlines() if "Move out of range on Y axis" in line]
         positions = [line for line in log.splitlines() if line.startswith(("toolhead:", "gcode:"))]
+        diagnostics = [line for line in log.splitlines() if "DRYRUN fan requested=" in line]
         trace_lines = [line for line in trace.splitlines() if line.startswith(("M ", "ERR ", "END "))]
         summary = [
             "mode=%s" % args.mode,
@@ -66,12 +69,21 @@ def run(args):
             "firmware_return_code=%d" % completed.returncode,
             "fixture_sha256=%s" % hashlib.sha256(fixture.read_bytes()).hexdigest(),
             "firmware_error_count=%d" % len(error_lines),
+            e0_config,
             *positions,
+            *diagnostics,
             *error_lines,
             *trace_lines,
         ]
         destination = evidence_dir / (args.mode + ".txt")
         destination.write_text("\n".join(summary) + "\n")
+        if args.decode_e0 and (temp / "mcu.out-e0").exists():
+            decoded = subprocess.run(
+                ["python3", str(klipper / "klippy/parsedump.py"),
+                 str(DICT_DIR / "at32f415_config.dict"), str(temp / "mcu.out-e0")],
+                text=True, capture_output=True, check=True,
+            ).stdout
+            (evidence_dir / (args.mode + "-mcu-e0.txt")).write_text(decoded)
         print("\n".join(summary))
 
 
@@ -81,6 +93,7 @@ def main():
     parser.add_argument("--gcode", required=True)
     parser.add_argument("--patch")
     parser.add_argument("--evidence", required=True)
+    parser.add_argument("--decode-e0", action="store_true")
     run(parser.parse_args())
 
 

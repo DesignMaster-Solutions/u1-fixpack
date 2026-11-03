@@ -19,9 +19,9 @@ on top of custom firmware builds.
 
 | Issue | What U1 owners see | Status |
 |---|---|---|
-| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patch and red/green/mutant proof; CI pending |
-| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | planned |
-| [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | planned |
+| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patch and red/green/mutant proof; CI green at `7a6cc7a` |
+| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof; CI pending |
+| [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
 
 Credit for finding and describing each bug goes to the people who filed the
 issues, on real printers. This project adds the printer-free reproduction, the
@@ -35,6 +35,11 @@ dictionaries for the U1's boards from the Kconfig files in `lava/`, and runs
 Klipper in batch mode. A bug counts as reproduced only when the firmware's own
 output shows it (an error it raises, a position it reports, the time a command is
 scheduled at), never when a mock says so.
+
+The #18 regression decodes the e0 MCU output with Klipper's `parsedump.py` and
+the U1 `at32f415_config.dict`. It compares the fan PWM clock with the first
+extruder step clock in the move after `M106`; the 12 ms tolerance is two 5 ms
+PWM cycles plus 2 ms for step and scheduling quantization.
 
 `tests/firmware/prep_cfg.py` and `tests/firmware/dryrun_tracer.py` are derived
 from U1 Dry Run under the same GPL-3.0 license. The issue #22 fixture exercises
