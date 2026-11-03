@@ -19,12 +19,15 @@ on top of custom firmware builds.
 
 | Issue | What U1 owners see | Status |
 |---|---|---|
-| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`) |
-| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status; 3 mutants red); see STATUS.md for CI |
+| [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`); upstream draft PR [#24](https://github.com/Snapmaker/u1-klipper/pull/24) |
+| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status; 3 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
 | [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
 
 Credit for finding and describing each bug goes to the people who filed the
-issues, on real printers. This project adds the printer-free reproduction, the
+issues: alternativniy (#18, who also traced the root cause and pointed to the
+mainline fix) and SwineFlew931 (#22, who also proposed the fix the patch implements).
+Both patches apply cleanly on 93cb12f (2.0.0) and on the 2.1.0 release PR (#23),
+which does not touch these files. This project adds the printer-free reproduction, the
 patch and the regression test.
 
 ## How it works
