@@ -61,8 +61,8 @@
   720,000 ticks (5 ms).
 - **Tolerance:** 12 ms, two PWM periods plus 2 ms for step and scheduling
   quantization. The baseline is far outside it; the patch is inside it.
-- **Patch:** `patches/0018-fan-gcode-motion-sync.patch`, credited to paxx12's
-  suggested lookahead fix. G-code fan commands use the motion queue; webhook
+- **Patch:** `patches/0018-fan-gcode-motion-sync.patch`, credited to alternativniy,
+  who reported #18 and pointed to the lookahead fix mainline Klipper uses. G-code fan commands use the motion queue; webhook
   and tool-change fan calls stay immediate. Requested speeds remain available
   to saved G-code and power-loss state (`get_requested_speed()`). Status keeps
   the stock `last_fan_value`, set when the lookahead callback schedules the PWM

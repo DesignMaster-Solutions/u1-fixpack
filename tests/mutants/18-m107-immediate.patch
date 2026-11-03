@@ -1,6 +1,6 @@
 From: Alan de Bortolo <info@designmastersolutions.com>
 Subject: [MUTANT] #18 patch, but M107 on the main fan stays immediate
-Suggested-by: paxx12 (Snapmaker/u1-klipper#18)
+Suggested-by: alternativniy (Snapmaker/u1-klipper#18)
 
 M106/M107 and SET_FAN_SPEED currently schedule PWM from reactor time, before
 the queued toolhead motion reaches the command. Use a toolhead lookahead
