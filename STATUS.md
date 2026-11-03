@@ -33,6 +33,9 @@
     That is why the patch was replaced.
   - Evidence: `docs/evidence/issue-22/harness-*.txt` (unittest output per
     firmware variant, and the firmware console for stock and patched).
+- **CI:** green on commit `d590c9c` (run
+  [41659167883](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41659167883)),
+  with the full-print proof and both older runners.
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
   `tests/fixtures/issue22.gcode`, `baseline/patched/mutant.txt`) still passes
   with the replaced patch.
@@ -85,6 +88,6 @@
 
 M1 #22: full print with real Pause/Resume: red 3/3 on `93cb12f`, green 3/3 patched, 3 mutants red.
 M2 #18: fan timing moves from 4366.239 ms early to 10.047 ms after first step.
-CI: green for both regressions on commits `7a6cc7a` and `4d3b404`.
+CI: green for both on `d590c9c` (#22 full-print proof added) after `4d3b404` (#18).
 M3 #8: not attempted; batch mode cannot prove the physical runout trigger.
 Next: validate both patches on a physical U1 before any upstream offer.
