@@ -1,0 +1,144 @@
+{
+  "brand": "U1 Fix Pack · github.com/DesignMaster-Solutions/u1-fixpack · narration: synthetic voice",
+  "voice": "Samantha",
+  "rate": 180,
+  "bg": "#101820",
+  "accent": "#f28c28",
+  "out": "../docs/demo.mp4",
+  "scenes": [
+    {
+      "title": "U1 Fix Pack",
+      "lines": [
+        "Two open bugs in Snapmaker's U1 firmware, reproduced with no printer,",
+        "the smallest patch for each, and a test that fails without it.",
+        "",
+        "Issue #22 on firmware 2.0.0: skip an object, Pause, Resume. Real console:"
+      ],
+      "mono": [
+        "!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]"
+      ],
+      "say": "Skip an object on a U1, pause, press Resume, and the print stops with Move out of range. That is Snapmaker's firmware two point zero, reproduced with no printer. Two open firmware bugs, a small patch for each, and a test that fails without it."
+    },
+    {
+      "title": "Snapmaker's own firmware, in batch mode",
+      "lines": [
+        "u1-klipper at the commit of firmware 2.0.0 (93cb12f)",
+        "The U1's shipped printer.cfg and fluidd.cfg",
+        "Klipper batch mode: the firmware code runs, nothing moves",
+        "",
+        "A bug counts only when the firmware's own output shows it:",
+        "an error it raises, a position it reports, a command clock to a board."
+      ],
+      "say": "The tests run Snapmaker's own U1 Klipper, at firmware two point zero, with the U1's shipped config, in Klipper batch mode. A bug counts only when the firmware's own output shows it."
+    },
+    {
+      "title": "Issue #22 on 2.0.0: Resume fails",
+      "lines": [
+        "A full print through the firmware's virtual SD card. Pause and Resume",
+        "go through the same handlers Moonraker calls. Real console, stock firmware:"
+      ],
+      "mono": [
+        "// Excluding object B",
+        "FIXPACK: user presses Pause",
+        "// toolhead: X:45.000000 Y:300.500000 Z:5.600000 E:22.288000",
+        "// gcode: X:33.000000 Y:448.500000 Z:5.800000 E:48.432000",
+        "FIXPACK: user presses Resume",
+        "// !! Resumes error!",
+        "!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]"
+      ],
+      "say": "Issue twenty-two. A full print, object B skipped, Pause and Resume pressed through the same handlers Moonraker calls. After the pause park, the head is at X forty-five, but the firmware's G code position says X thirty-three. Resume fails with Move out of range."
+    },
+    {
+      "title": "The cause, and the 10-line patch",
+      "lines": [
+        "The pause park moves the head outside the skip transform. The offset survives.",
+        "Patch 0022, the fix SwineFlew931 proposed, in exclude_object.get_position():"
+      ],
+      "mono": [
+        "     offset = self._get_extrusion_offsets()",
+        "     pos = self.next_transform.get_position()",
+        "+    if self.last_tx_position is None or any(",
+        "+            abs(pos[i] - self.last_tx_position[i]) > 1e-6 for i in range(3)):",
+        "+        # The head is not where this transform last sent it (a manual_move",
+        "+        # park, homing, a tool change): the skipped-object XYZ offset no",
+        "+        # longer describes where it is, so restart from the real position.",
+        "+        offset[0] = offset[1] = offset[2] = 0.",
+        "+        self.last_position_extruded[:3] = pos[:3]",
+        "+        self.last_tx_position = pos[:3]"
+      ],
+      "say": "The cause: while an object is skipped, the firmware keeps an offset, and the pause park moves the head without clearing it. The patch is the fix the issue's reporter proposed. When the head is not where the skip transform last sent it, reset the offset and start from the real position."
+    },
+    {
+      "title": "Issue #22 with the patch: 3 of 3 cases finish",
+      "lines": [
+        "Pause/Resume in the skipped layers, the end-of-print park + G1 E30, and a park",
+        "while the object is still skipped. Results in docs/evidence/issue-22:"
+      ],
+      "mono": [
+        "✖ 2.0.0 stock               Ran 3 tests   FAILED (failures=3)",
+        "✔ 2.0.0 + patch 0022        Ran 3 tests   OK",
+        "✔ FIXPACK: print ended, state complete",
+        "✖ mutant: keeps Z offset    FAILED (failures=3)   caught",
+        "✖ mutant: keeps old ref     FAILED (failures=1)   caught",
+        "✖ mutant: my first patch    FAILED (failures=1)   caught"
+      ],
+      "say": "With the patch, all three cases finish, and the print ends complete. Three deliberately wrong versions of the patch fail the test, including my own first version, which survived a single-leg park but not the U1's multi-leg one."
+    },
+    {
+      "title": "Issue #18 on 2.0.0: the part fan switches early",
+      "lines": [
+        "M106 and M107 queued behind moves. The test decodes the e0 board's command",
+        "stream and compares the fan PWM clock with the next extruder step. Real output:"
+      ],
+      "mono": [
+        "mode=baseline",
+        "fan_edge=on fan_pwm_clock=43200000 first_following_e_step_clock=671938467",
+        "fan_minus_step_ms=-4366.239354 tolerance_ms=12.0",
+        "fan_edge=off fan_pwm_clock=57600000 first_following_e_step_clock=671938467",
+        "fan_minus_step_ms=-4266.239354 tolerance_ms=12.0"
+      ],
+      "say": "Issue eighteen: the part cooling fan switches before the head gets there. The test decodes the commands the firmware sends to the extruder board, and compares the clock of the fan's P W M command with the next extruder step. On two point zero, the fan turns on, and off, more than four seconds early."
+    },
+    {
+      "title": "Issue #18 with the patch: 10 ms after the step",
+      "lines": [
+        "G-code fan changes ride the motion queue, as in mainline Klipper (the fix",
+        "alternativniy pointed to). Tolerance 12 ms: two 5 ms PWM periods + 2 ms."
+      ],
+      "mono": [
+        "mode=patched",
+        "fan_edge=on fan_pwm_clock=673385225 first_following_e_step_clock=671938467",
+        "fan_minus_step_ms=10.046931 tolerance_ms=12.0",
+        "fan_edge=off fan_pwm_clock=673385225 first_following_e_step_clock=671938467",
+        "fan_minus_step_ms=10.046931 tolerance_ms=12.0",
+        "✖ mutants caught: M107 left immediate, status never updates, status too early"
+      ],
+      "say": "With the patch, G code fan changes ride the motion queue, as in mainline Klipper, which is the fix the reporter pointed to. Both edges land ten milliseconds after the step, inside a twelve millisecond tolerance. Three deliberately wrong versions fail."
+    },
+    {
+      "title": "In CI on every push, offered upstream",
+      "lines": [
+        "GitHub Actions: firmware build, both regressions, full print with",
+        "Pause/Resume (stock red, patched green, mutants red), on every push.",
+        "",
+        "Draft pull requests on Snapmaker/u1-klipper: #24 (for #22), #25 (for #18).",
+        "Both patches apply cleanly on 2.0.0 and on the 2.1.0 release PR (#23)."
+      ],
+      "say": "The checks run in GitHub Actions on every push. Both patches are offered to Snapmaker as draft pull requests, and both apply cleanly on the two point one release Snapmaker opened this week."
+    },
+    {
+      "title": "What this does not prove",
+      "lines": [
+        "Batch mode has no physics and no real sensors.",
+        "A patch proven here fixes the firmware logic. It is not a print yet.",
+        "Neither patch has run on a physical U1.",
+        "#8 (runout resets the flow calibration) is out: it needs a real sensor event.",
+        "",
+        "Have a U1 and hit either bug? Try the patch on a custom firmware build",
+        "and tell me what happens, right or wrong, in the U1 Fix Pack forum topic.",
+        "Built with AI coding assistance. GPL-3.0."
+      ],
+      "say": "What this does not prove: batch mode has no physics and no real sensors, and neither patch has run on a physical U1. If you have a U1 and hit either bug, try the patch on a custom firmware build, and tell me what happens in the forum topic."
+    }
+  ]
+}

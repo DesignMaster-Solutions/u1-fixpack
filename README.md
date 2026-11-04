@@ -7,6 +7,9 @@ Entered in the Snapmaker Innovation Fund, Phase 2:
 [U1 Fix Pack on the Snapmaker forum](https://forum.snapmaker.com/t/44036). If you
 try a patch on a physical U1, please report it there or in an issue here, either way.
 
+Demo video, 2.5 minutes (real firmware output from `docs/evidence/`, synthetic voice; script in
+`video/demo.json`): https://designmaster-solutions.github.io/u1-fixpack/demo.mp4
+
 Each bug in this pack gets three things:
 
 1. **A reproduction that fails on the shipped firmware.** The test runs
