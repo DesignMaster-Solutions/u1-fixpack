@@ -41,6 +41,25 @@ every mutant fails ([evidence](docs/evidence/2.1.0/)). CI runs every check on bo
 releases. This project adds the printer-free reproduction, the
 patch and the regression test.
 
+## On the Extended firmware
+
+The community [Extended firmware](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware)
+builds stock 2.1.0 plus its own Klipper patches (`overlays/firmware-extended/11-patch-klipper`,
+01 to 08) and still has both bugs. Measured on its `develop` at 601e196 (4 November 2026):
+
+| Tree | #18 fan on | #18 fan off | #22 (3 cases) |
+|---|---|---|---|
+| Extended as built (2.1.0 + 01..08) | 4366 ms early | 4266 ms early | 3/3 fail, `Move out of range on Y axis: 35.000 450.500 1.200` |
+| Extended + both patches as 09 and 10 | 10 ms after the step | 10 ms after the step | 3/3 pass |
+
+The 10 patches apply in order with the command the Extended build uses
+(`patch -F 0 --no-backup-if-mismatch -p1`), and that tree is byte-identical to the one tested
+([evidence](docs/evidence/extended-2.1.0/)). Checked on the u1-klipper 2.1.0 source, not on the
+firmware image's rootfs. Reproduce: `tests/extended/fetch.sh`, then `apply.sh` and
+`format.sh` in the image (commands in each file), then `python3 tests/extended/prove_extended.py`.
+Offered there as 09/10 in the Klipper overlay, so a U1 owner can flash a test build from that
+pull request.
+
 ## How it works
 
 The firmware runner comes from [U1 Dry Run](https://github.com/DesignMaster-Solutions/u1-dryrun)

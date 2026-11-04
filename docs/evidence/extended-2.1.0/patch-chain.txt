@@ -1,0 +1,34 @@
+GNU patch 2.8
+tree: u1-klipper 7ac453b50fe6779b2ec0b759038a17da5e6d671d
+[+] Applying patch: 01_6d1256ddc.patch
+patching file klippy/extras/resonance_tester.py
+[+] Applying patch: 02_8291788f4.patch
+patching file klippy/toolhead.py
+[+] Applying patch: 03_847331260.patch
+patching file klippy/toolhead.py
+[+] Applying patch: 04_16b4b6b30.patch
+patching file klippy/extras/resonance_tester.py
+Hunk #5 succeeded at 287 (offset 28 lines).
+Hunk #6 succeeded at 314 (offset 35 lines).
+Hunk #7 succeeded at 368 (offset 56 lines).
+patching file klippy/extras/shaper_calibrate.py
+patching file klippy/toolhead.py
+[+] Applying patch: 05_16fc46fe5.patch
+patching file klippy/toolhead.py
+Hunk #1 succeeded at 138 (offset 4 lines).
+[+] Applying patch: 06_snapmaker_fix.patch
+patching file klippy/extras/resonance_tester.py
+Hunk #1 succeeded at 591 (offset 62 lines).
+[+] Applying patch: 07_aht10_mainline_klipper.patch
+patching file klippy/extras/aht10.py
+patching file klippy/extras/aht10.py
+patching file klippy/extras/aht10.py
+[+] Applying patch: 08_temperature_combined.patch
+patching file klippy/extras/temperature_combined.py
+[+] Applying patch: 09_fan_gcode_motion_sync.patch
+patching file klippy/extras/fan.py
+patching file klippy/extras/fan_generic.py
+patching file klippy/extras/virtual_sdcard.py
+[+] Applying patch: 10_exclude_object_manual_move.patch
+patching file klippy/extras/exclude_object.py
+CHAIN_OK

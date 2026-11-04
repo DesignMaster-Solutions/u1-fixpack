@@ -1,0 +1,62 @@
+allocate_oids count=16
+config_tmcuart oid=0 rx_pin=PA15 pull_up=0 tx_pin=PA15 bit_time=3600
+config_analog_in oid=6 pin=PB1
+config_analog_in oid=7 pin=PA3
+config_digital_out oid=8 pin=PB3 value=0 default_value=0 max_duration=0
+set_digital_out_pwm_cycle oid=8 cycle_ticks=720000
+config_counter oid=1 pin=PB4 pull_up=0
+config_digital_out oid=9 pin=PB0 value=1 default_value=1 max_duration=0
+set_digital_out_pwm_cycle oid=9 cycle_ticks=1440000
+config_counter oid=2 pin=PA10 pull_up=0
+config_digital_out oid=10 pin=PB7 value=0 default_value=1 max_duration=0
+inductance_coil_config oid=11 cal_mode=1 capture_over_cnt=200 freq_cal_cycle=1000 cal_time_out=2000000 trigger_mode=0 trigger_invert=0 trg_freq_ht=1200000 trg_freq_lt=1200000 cal_window_size=5
+query_inductance_coil oid=11 rest_ticks=0
+config_endstop oid=3 pin=PA0 pull_up=0 is_pulse_gpio=1
+config_trsync oid=4
+config_power_loss_check oid=12 clock=161280000 power_loss_trigger_time=2000 report_interval=0 duty_threshold=540000 debounce_threshold=20 type_confirm_threshold=2
+config_analog_in oid=13 pin=PA2
+config_digital_out oid=14 pin=PB5 value=0 default_value=0 max_duration=1008000000
+set_digital_out_pwm_cycle oid=14 cycle_ticks=7200000
+config_stepper oid=5 step_pin=PA8 dir_pin=PA9 invert_step=4294967295 step_pulse_ticks=0 type=3 index=0
+config_digital_out oid=15 pin=PB2 value=1 default_value=1 max_duration=0
+finalize_config crc=1951835851
+query_analog_in oid=6 clock=152640000 sample_ticks=144000 sample_count=6 rest_ticks=14400000 min_value=0 max_value=24570 range_check_count=0
+query_analog_in oid=7 clock=154080000 sample_ticks=144000 sample_count=6 rest_ticks=14400000 min_value=0 max_value=24570 range_check_count=0
+queue_digital_out oid=8 clock=28800000 on_ticks=0
+query_counter oid=1 clock=145440000 poll_ticks=144000 sample_ticks=144000000
+queue_digital_out oid=9 clock=28800000 on_ticks=1440000
+query_counter oid=2 clock=146880000 poll_ticks=72000 sample_ticks=144000000
+query_analog_in oid=13 clock=162720000 sample_ticks=144000 sample_count=8 rest_ticks=43200000 min_value=619 max_value=32484 range_check_count=4
+queue_digital_out oid=14 clock=28800000 on_ticks=0
+queue_digital_out oid=8 clock=43200000 on_ticks=720000
+queue_digital_out oid=8 clock=57600000 on_ticks=0
+queue_digital_out oid=15 clock=673385225 on_ticks=0
+set_next_step_dir oid=5 dir=1
+queue_step oid=5 interval=671938467 count=1 add=0 line=4294967295
+queue_step oid=5 interval=621262 count=1 add=0 line=4294967295
+queue_step oid=5 interval=376080 count=1 add=0 line=4294967295
+queue_step oid=5 interval=285091 count=1 add=0 line=4294967295
+queue_step oid=5 interval=232243 count=3 add=-26544 line=4294967295
+queue_step oid=5 interval=168230 count=4 add=-8658 line=4294967295
+queue_step oid=5 interval=134724 count=9 add=-2671 line=4294967295
+queue_step oid=5 interval=113938 count=12 add=-357 line=4294967295
+queue_step oid=5 interval=111423 count=69 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=647 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=646 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=647 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=646 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=647 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=646 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=647 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=646 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=647 add=0 line=4294967295
+queue_step oid=5 interval=111375 count=519 add=0 line=4294967295
+queue_step oid=5 interval=109390 count=11 add=1038 line=4294967295
+queue_step oid=5 interval=122483 count=6 add=4370 line=4294967295
+queue_step oid=5 interval=149081 count=4 add=13069 line=4294967295
+queue_step oid=5 interval=213441 count=1 add=0 line=4294967295
+queue_step oid=5 interval=249888 count=1 add=0 line=4294967295
+queue_step oid=5 interval=310414 count=1 add=0 line=4294967295
+queue_step oid=5 interval=430676 count=1 add=0 line=4294967295
+queue_step oid=5 interval=919512 count=1 add=0 line=4294967295
+queue_digital_out oid=15 clock=1407842825 on_ticks=1
