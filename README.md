@@ -57,8 +57,9 @@ The 10 patches apply in order with the command the Extended build uses
 ([evidence](docs/evidence/extended-2.1.0/)). Checked on the u1-klipper 2.1.0 source, not on the
 firmware image's rootfs. Reproduce: `tests/extended/fetch.sh`, then `apply.sh` and
 `format.sh` in the image (commands in each file), then `python3 tests/extended/prove_extended.py`.
-Offered there as 09/10 in the Klipper overlay, so a U1 owner can flash a test build from that
-pull request.
+Offered there as 09/10 in the Klipper overlay, in
+[pull request #869](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware/pull/869),
+so a U1 owner can flash a test build from it.
 
 ## How it works
 
