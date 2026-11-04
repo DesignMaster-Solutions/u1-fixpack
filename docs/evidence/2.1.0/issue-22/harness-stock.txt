@@ -1,0 +1,51 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=none
+expected: fail; unittest exit code: 1 (ok)
+
+test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move) ... FAIL
+test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put) ... FAIL
+test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print) ... FAIL
+
+======================================================================
+FAIL: test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 34, in test_end_of_print_park_then_e_only_move
+    self.assertEqual(p.errors(), [])
+AssertionError: Lists differ: ['!! Move out of range on Y axis: 35.000 450.500 1.200 [54.288]'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'!! Move out of range on Y axis: 35.000 450.500 1.200 [54.288]'
+
+- ['!! Move out of range on Y axis: 35.000 450.500 1.200 [54.288]']
++ []
+
+======================================================================
+FAIL: test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 43, in test_park_inside_skipped_object_then_partial_moves_stay_put
+    self.assert_gcode_matches_head(after_park, "after the park")
+  File "/fixpack/tests/test_issue22.py", line 17, in assert_gcode_matches_head
+    self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
+AssertionError: 33.0 != 45.0 within 0.001 delta (12.0 difference) : after the park: gcode X=33.000 but the head is at 45.000
+
+======================================================================
+FAIL: test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 24, in test_pause_then_resume_continues_the_print
+    self.assertEqual(p.errors(), [])
+AssertionError: Lists differ: ['!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]'
+
+- ['!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]']
++ []
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.729s
+
+FAILED (failures=3)

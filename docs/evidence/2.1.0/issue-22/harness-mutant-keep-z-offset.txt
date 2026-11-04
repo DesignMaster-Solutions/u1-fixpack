@@ -1,0 +1,47 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/22-keep-z-offset.patch
+expected: fail; unittest exit code: 1 (ok)
+
+test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move) ... Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+FAIL
+test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put) ... Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+FAIL
+test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print) ... Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+FAIL
+
+======================================================================
+FAIL: test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 35, in test_end_of_print_park_then_e_only_move
+    self.assert_gcode_matches_head(p.positions()[-1], "after park + G1 E30")
+  File "/fixpack/tests/test_issue22.py", line 17, in assert_gcode_matches_head
+    self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
+AssertionError: 1.2 != 0.6 within 0.001 delta (0.6 difference) : after park + G1 E30: gcode Z=1.200 but the head is at 0.600
+
+======================================================================
+FAIL: test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 43, in test_park_inside_skipped_object_then_partial_moves_stay_put
+    self.assert_gcode_matches_head(after_park, "after the park")
+  File "/fixpack/tests/test_issue22.py", line 17, in assert_gcode_matches_head
+    self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
+AssertionError: 0.8 != 0.6 within 0.001 delta (0.20000000000000007 difference) : after the park: gcode Z=0.800 but the head is at 0.600
+
+======================================================================
+FAIL: test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 27, in test_pause_then_resume_continues_the_print
+    self.assert_gcode_matches_head(p.positions()[0], "after the pause park")
+  File "/fixpack/tests/test_issue22.py", line 17, in assert_gcode_matches_head
+    self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
+AssertionError: 5.8 != 5.6 within 0.001 delta (0.20000000000000018 difference) : after the pause park: gcode Z=5.800 but the head is at 5.600
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.097s
+
+FAILED (failures=3)

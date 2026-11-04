@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Red/green/mutant check for issue #22 against the real pinned U1 firmware."""
+import os
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IMAGE = "u1-fixpack:local"
-EVIDENCE = ROOT / "docs/evidence/issue-22"
+# FIXPACK_IMAGE / FIXPACK_EVIDENCE let CI prove each firmware release in its own image and folder.
+IMAGE = os.environ.get("FIXPACK_IMAGE", "u1-fixpack:local")
+EVIDENCE = ROOT / os.environ.get("FIXPACK_EVIDENCE", "docs/evidence") / "issue-22"
 FIXTURE = "/work/tests/fixtures/issue22.gcode"
 PATCH = "/work/patches/0022-exclude-object-manual-move.patch"
 
@@ -13,7 +15,7 @@ PATCH = "/work/patches/0022-exclude-object-manual-move.patch"
 def run_mode(mode):
     command = ["docker", "run", "--rm", "-v", f"{ROOT}:/work", IMAGE,
                "--mode", mode, "--gcode", FIXTURE, "--patch", PATCH,
-               "--evidence", "/work/docs/evidence/issue-22"]
+               "--evidence", "/work/" + str(EVIDENCE.relative_to(ROOT))]
     if mode == "baseline":
         command = [part for part in command if part not in ("--patch", PATCH)]
     completed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=180)

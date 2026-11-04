@@ -1,12 +1,13 @@
 #!/bin/sh
 # Red/green/mutant proof for every tests/test_issueNN.py, on the real firmware in the image.
-#   stock firmware (93cb12f)          -> the issue's test must FAIL
+#   stock firmware (the image's pinned commit) -> the issue's test must FAIL
 #   with every patches/*.patch        -> it must PASS
 #   with each tests/mutants/NN-*.patch -> it must FAIL
 # Usage, from the repo root: tests/prove.sh [image] [evidence-root]   (exit 0 = all as expected)
 image=${1:-u1-fixpack:local}
 evidence=$2
 status=0
+fw=$(docker run --rm --entrypoint git "$image" -C /opt/klipper log --oneline -1)
 check() {  # issue label patches expected
   out=$(docker run --rm -e FIXPACK_PATCHES="$3" -v "$PWD:/fixpack" -w /fixpack/tests \
         --entrypoint python3 "$image" -m unittest -v "test_issue$1" 2>&1)
@@ -15,7 +16,7 @@ check() {  # issue label patches expected
   echo "#$1 $2: expected $4, unittest exit $rc -> $verdict"
   if [ -n "$evidence" ]; then
     mkdir -p "$evidence/issue-$1"
-    { echo "firmware: u1-klipper 93cb12f, FIXPACK_PATCHES=$3"; echo "expected: $4; unittest exit code: $rc ($verdict)"; echo; echo "$out"; } \
+    { echo "firmware: u1-klipper $fw, FIXPACK_PATCHES=$3"; echo "expected: $4; unittest exit code: $rc ($verdict)"; echo; echo "$out"; } \
       > "$evidence/issue-$1/harness-$2.txt"
   fi
 }

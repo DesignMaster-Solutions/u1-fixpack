@@ -33,8 +33,12 @@ on top of custom firmware builds.
 Credit for finding and describing each bug goes to the people who filed the
 issues: alternativniy (#18, who also traced the root cause and pointed to the
 mainline fix) and SwineFlew931 (#22, who also proposed the fix the patch implements).
-Both patches apply cleanly on 93cb12f (2.0.0) and on the 2.1.0 release PR (#23),
-which does not touch these files. This project adds the printer-free reproduction, the
+Both patches are proven on 93cb12f (2.0.0) and on 7ac453b (2.1.0, released 4 November
+2026, now upstream main), which does not touch these files: on stock 2.1.0 #22 still
+stops with the same `Move out of range on Y axis: 53.641 445.274 7.000` and #18 still
+switches the fan 4366 ms (on) and 4266 ms (off) early; with the patches both pass, and
+every mutant fails ([evidence](docs/evidence/2.1.0/)). CI runs every check on both
+releases. This project adds the printer-free reproduction, the
 patch and the regression test.
 
 ## How it works

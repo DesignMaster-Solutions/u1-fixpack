@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Compare the U1 fan PWM clock with the next move's extruder-step clock."""
 import re
+import os
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-IMAGE = "u1-fixpack:local"
-EVIDENCE = ROOT / "docs/evidence/issue-18"
+# FIXPACK_IMAGE / FIXPACK_EVIDENCE let CI prove each firmware release in its own image and folder.
+IMAGE = os.environ.get("FIXPACK_IMAGE", "u1-fixpack:local")
+FIRMWARE = os.environ.get("FIXPACK_FIRMWARE", "93cb12faebf6e74c51bbc5f0be66e95124af14c8")
+EVIDENCE = ROOT / os.environ.get("FIXPACK_EVIDENCE", "docs/evidence") / "issue-18"
 FIXTURE = "/work/tests/fixtures/issue18.gcode"
 PATCH = "/work/patches/0018-fan-gcode-motion-sync.patch"
 # M107 half of #18: fan on and settled first, then M107 queued behind travel moves.
@@ -58,7 +61,7 @@ def status_failures(mode, summary):
 
 
 def parse_result(summary, decoded, edge="on"):
-    assert "firmware_commit=93cb12faebf6e74c51bbc5f0be66e95124af14c8" in summary
+    assert "firmware_commit=" + FIRMWARE in summary
     assert "firmware_error_count=0" in summary
     frequency = int(re.search(r"CLOCK_FREQ=(\d+)", summary).group(1))
     assert frequency == 144000000, frequency
