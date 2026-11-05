@@ -58,5 +58,5 @@ queue_step oid=5 interval=249888 count=1 add=0 line=4294967295
 queue_step oid=5 interval=310414 count=1 add=0 line=4294967295
 queue_step oid=5 interval=430676 count=1 add=0 line=4294967295
 queue_step oid=5 interval=919512 count=1 add=0 line=4294967295
-queue_digital_out oid=15 clock=1407842825 on_ticks=1
-queue_digital_out oid=8 clock=1393442825 on_ticks=0
+queue_digital_out oid=15 clock=1449602825 on_ticks=1
+queue_digital_out oid=8 clock=1435202825 on_ticks=0

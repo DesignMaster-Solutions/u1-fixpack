@@ -1,18 +1,19 @@
 mode=patched
 firmware_commit=93cb12faebf6e74c51bbc5f0be66e95124af14c8
 firmware_return_code=0
-fixture_sha256=212dae43c4e03caf3fde294b62bcfa7a97967d3f729fcaabb58ef1248306c66d
+fixture_sha256=7448ef16e97afbe1022ab6b08013c6f324245dff26c1dbfb2da81cb7b249261c
 firmware_error_count=0
 MCU 'e0' config: ADC_MAX=4095 BUS_PINS_i2c1=PB6,PB7 BUS_PINS_i2c1a=PB8,PB9 BUS_PINS_i2c2=PB10,PB11 BUS_PINS_spi1=PA6,PA7,PA5 BUS_PINS_spi1a=PB4,PB5,PB3 BUS_PINS_spi2=PB14,PB15,PB13 BUS_PINS_spi3=PB4,PB5,PB3 CLOCK_FREQ=144000000 INITIAL_PINS=PB2,!PB5,PB0,!PB3 MCU=stm32f105xc PWM_MAX=255 RESERVE_PINS_USB=PA11,PA12 STATS_SUMSQ_BASE=256 STEPPER_BOTH_EDGE=1
-11-03 18:00:29.830:DRYRUN fan requested=0.0 status=0.0 saved=None scheduled_time=0.0
-11-03 18:00:29.830:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0
-11-03 18:00:29.831:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0
-11-03 18:00:29.833:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=4.676286288284638
+11-05 14:06:01.027:DRYRUN fan requested=0.0 status=0.0 saved=None scheduled_time=0.0 mcu_time=0.0
+11-05 14:06:01.027:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0 mcu_time=0.0
+11-05 14:06:01.027:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=0.0 mcu_time=0.0
+11-05 14:06:01.028:DRYRUN wait model on
+11-05 14:06:01.030:DRYRUN fan requested=1.0 status=0.0 saved=1.0 scheduled_time=4.676286288284638 mcu_time=9.676686288284637
 M 0.000 0.000 275.000 0.00000 33.3 0 extruder 0.330 G
 M 10.000 10.000 275.000 0.00000 33.3 0 extruder 0.350 G
 M 140.000 10.000 275.000 0.00000 33.3 0 extruder 0.350 G
 M 140.000 10.000 275.000 10.00000 2.0 0 extruder 0.775 G
-END 10.377
+END 10.917
 fan_pin=PB3 fan_oid=8
 e_step_pin=PA8 e_step_oid=5
 mcu_clock_hz=144000000 pwm_cycle_ticks=720000

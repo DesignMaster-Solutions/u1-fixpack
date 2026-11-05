@@ -1,0 +1,6 @@
+patched: pwm_print_time=1.025931
+  flushed    mcu_time=0.350000 status=0.0
+  pwm-1ms    mcu_time=1.024931 status=0.0
+  at-pwm     mcu_time=1.025931 status=1.0
+  after-M400 mcu_time=6.026331 status=1.0
+  failed=none

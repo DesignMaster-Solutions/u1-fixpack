@@ -28,35 +28,35 @@ queue_digital_out oid=9 clock=28800000 on_ticks=1440000
 query_counter oid=2 clock=146880000 poll_ticks=72000 sample_ticks=144000000
 query_analog_in oid=13 clock=162720000 sample_ticks=144000 sample_count=8 rest_ticks=43200000 min_value=619 max_value=32484 range_check_count=4
 queue_digital_out oid=14 clock=28800000 on_ticks=0
-queue_digital_out oid=8 clock=43200000 on_ticks=720000
-queue_digital_out oid=15 clock=1565413463 on_ticks=0
+queue_digital_out oid=8 clock=1667653463 on_ticks=720000
+queue_digital_out oid=15 clock=1703653463 on_ticks=0
 set_next_step_dir oid=5 dir=1
-queue_step oid=5 interval=1564152285 count=1 add=0 line=4294967295
+queue_step oid=5 interval=1702392285 count=1 add=0 line=4294967295
 queue_step oid=5 interval=1009436 count=1 add=0 line=4294967295
 queue_step oid=5 interval=676185 count=2 add=-6555 line=4294967295
 queue_step oid=5 interval=708845 count=1 add=0 line=4294967295
 queue_step oid=5 interval=801868 count=1 add=0 line=4294967295
 queue_step oid=5 interval=957839 count=2 add=24854 line=4294967295
-queue_step oid=5 interval=980442 count=72 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=65 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
+queue_step oid=5 interval=980443 count=73 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
+queue_step oid=5 interval=980443 count=73 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
+queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
+queue_step oid=5 interval=980443 count=73 add=0 line=4294967295
 queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
 queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
 queue_step oid=5 interval=980443 count=74 add=0 line=4294967295
 queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
 queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980443 count=74 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
 queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980443 count=74 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980443 count=74 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=74 add=0 line=4294967295
-queue_step oid=5 interval=980442 count=73 add=0 line=4294967295
-queue_step oid=5 interval=980444 count=38 add=0 line=4294967295
-queue_step oid=5 interval=1055980 count=1 add=0 line=4294967295
+queue_step oid=5 interval=980443 count=45 add=0 line=4294967295
+queue_step oid=5 interval=1056014 count=1 add=0 line=4294967295
 set_next_step_dir oid=5 dir=0
 queue_step oid=5 interval=3068446 count=1 add=0 line=4294967295
-queue_digital_out oid=15 clock=2847600022 on_ticks=1
-queue_digital_out oid=8 clock=2833200022 on_ticks=0
+queue_digital_out oid=15 clock=3027600022 on_ticks=1
+queue_digital_out oid=8 clock=3013200022 on_ticks=0

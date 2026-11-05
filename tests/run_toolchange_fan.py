@@ -18,6 +18,9 @@ FIRMWARE = os.environ.get("FIXPACK_FIRMWARE", "93cb12faebf6e74c51bbc5f0be66e9512
 EVIDENCE = ROOT / os.environ.get("FIXPACK_EVIDENCE", "docs/evidence") / "toolchange-fan"
 PATCH = "/work/patches/0018-fan-gcode-motion-sync.patch"
 MUTANT = "/work/tests/mutants/18-toolchange-status-before-flush.patch"
+# The status follows the PWM print time, so it lags a just-scheduled M106 (PR #25 review): the tool
+# change must restore get_requested_speed(). This mutant restores the status instead.
+MUTANT_STATUS = "/work/tests/mutants/18-toolchange-reads-status.patch"
 # fixture: (speed already applied before the queued M106s, last queued M106)
 FIXTURES = {
     "toolchange-fan": (0.0, 1.0),       # M106 S255 queued, then T1
@@ -55,10 +58,11 @@ def restored_speed(summary, decoded):
 
 
 def main():
-    lines = []
+    lines, restored = [], {}
     for fixture, (before, last) in FIXTURES.items():
         for name, mode, patch in (("baseline", "baseline", PATCH), ("patched", "patched", PATCH),
-                                  ("mutant-status-before-flush", "patched", MUTANT)):
+                                  ("mutant-status-before-flush", "patched", MUTANT),
+                                  ("mutant-reads-status", "patched", MUTANT_STATUS)):
             evidence = EVIDENCE / fixture / name
             evidence.mkdir(parents=True, exist_ok=True)
             summary, decoded = run(mode, fixture, evidence, patch)
@@ -71,11 +75,12 @@ def main():
             lines.append(line)
             print(line)
             if name.startswith("mutant"):
-                # The mutant reads the status while the M106s still wait in the lookahead queue.
-                assert abs(speed - last) > 0.01, ("mutant survived", line)
-                assert abs(speed - before) < 0.01, ("mutant should restore the stale speed", line)
+                restored.setdefault(name, []).append((speed, last))
             else:
                 assert abs(speed - last) < 0.01, line
+    # Each mutant restores a stale speed (not the last M106) in at least one fixture: red.
+    for name, speeds in restored.items():
+        assert any(abs(s - want) > 0.01 for s, want in speeds), ("mutant survived", name, speeds)
     (EVIDENCE / "summary.txt").write_text("\n".join(lines) + "\n")
     print("tool change after M106: baseline/patched restore the last M106, mutant red: PASS")
 

@@ -147,13 +147,20 @@ class DryrunTracer:
 
     def _fan_diag(self, gcmd):
         fan = self.printer.lookup_object("fan").fan
+        if gcmd.get_int("FLUSH", 0):
+            # Run the lookahead callbacks (schedule the queued PWM) without waiting for the moves.
+            self.toolhead._flush_lookahead()
+        at_pwm = gcmd.get_float("AT_PWM", None)
+        if at_pwm is not None:
+            # Needs DRYRUN_WAIT_MODEL: set the modeled MCU clock to the last PWM print time + AT_PWM.
+            self.model_now[0] = fan.last_fan_time + at_pwm
         saved = self.printer.lookup_object("gcode_move").saved_states.get(
             "fan_sync_test", {}).get("fan_speed_dict", {}).get("main_fan")
         requested = getattr(fan, "get_requested_speed", lambda: fan.last_fan_value)()
-        gcmd.respond_info("DRYRUN fan requested=%s status=%s saved=%s scheduled_time=%s" %
-                          (requested,
-                           fan.get_status(self.printer.get_reactor().monotonic())["speed"],
-                           saved, fan.last_fan_time))
+        eventtime = self.printer.get_reactor().monotonic()
+        gcmd.respond_info("DRYRUN fan requested=%s status=%s saved=%s scheduled_time=%s mcu_time=%s" %
+                          (requested, fan.get_status(eventtime)["speed"], saved, fan.last_fan_time,
+                           fan.get_mcu().estimated_print_time(eventtime)))
 
     def _wait_model(self, gcmd):
         # Batch mode never waits: toolhead.wait_moves breaks out at "if not self.can_pause". On the
@@ -161,6 +168,7 @@ class DryrunTracer:
         # exit condition of that loop). Opt-in model of that: after each wait, every MCU's estimated
         # print time catches up with the toolhead's print time.
         toolhead, now = self.toolhead, [0.0]
+        self.model_now = now
         orig_wait = toolhead.wait_moves
 
         def wait_moves():

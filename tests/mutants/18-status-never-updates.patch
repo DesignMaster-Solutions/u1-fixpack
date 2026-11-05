@@ -1,17 +1,22 @@
+Subject: [MUTANT] #18 patch, but the status never reaches a scheduled speed
+
 diff --git a/klippy/extras/fan.py b/klippy/extras/fan.py
-index 0964ab0a..c5525fda 100644
+index 0964ab0a..ffe74b55 100644
 --- a/klippy/extras/fan.py
 +++ b/klippy/extras/fan.py
-@@ -14,6 +14,8 @@ class Fan:
+@@ -14,6 +14,11 @@ class Fan:
          self.reactor = self.printer.get_reactor()
          self.last_fan_value = 0.
          self.last_fan_time = 0.
 +        self.requested_fan_value = 0.
 +        self.pending_values = []
++        # (print_time, value) PWM changes the status has not reached yet
++        self.scheduled_values = []
++        self.status_value = 0.
          self.last_enable_value = 0.
          # Read config
          self.max_power = config.getfloat('max_power', 1., above=0., maxval=1.)
-@@ -49,6 +51,7 @@ class Fan:
+@@ -49,6 +54,7 @@ class Fan:
      def get_mcu(self):
          return self.mcu_fan.get_mcu()
      def set_speed(self, print_time, value, control_enable=True):
@@ -19,11 +24,11 @@ index 0964ab0a..c5525fda 100644
          if value < self.off_below:
              value = 0.
          value = max(0., min(self.max_power, value * self.max_power))
-@@ -78,12 +81,22 @@ class Fan:
-             print_time += self.kick_start_time
+@@ -79,18 +85,36 @@ class Fan:
          self.mcu_fan.set_pwm(print_time, value, FAN_MIN_TIME)
          self.last_fan_time = print_time
--        self.last_fan_value = value
+         self.last_fan_value = value
++        self._status_speed(self.reactor.monotonic())
      def set_speed_from_command(self, value, control_enable=True):
          system_time = self.reactor.monotonic()
          system_time += FAN_MIN_TIME
@@ -40,10 +45,24 @@ index 0964ab0a..c5525fda 100644
 +        if self.pending_values:
 +            return self.pending_values[-1]
 +        return self.requested_fan_value
++    def _status_speed(self, eventtime):
++        # Report a speed once the MCU clock reaches its PWM print time
++        print_time = self.get_mcu().estimated_print_time(eventtime)
++        while self.scheduled_values and self.scheduled_values[0][0] <= print_time:
++            self.status_value = self.scheduled_values.pop(0)[1]
++        return self.status_value
      def _handle_request_restart(self, print_time):
          self.set_speed(print_time, 0.)
  
-@@ -158,12 +171,12 @@ class PrinterFan:
+     def get_status(self, eventtime):
+         tachometer_status = self.tachometer.get_status(eventtime)
+         return {
+-            'speed': self.last_fan_value,
++            'speed': self._status_speed(eventtime),
+             'rpm': tachometer_status['rpm'],
+         }
+ 
+@@ -158,12 +182,12 @@ class PrinterFan:
  
      def get_all_fan_speed(self):
          fan_speed_dict = {}
@@ -58,7 +77,7 @@ index 0964ab0a..c5525fda 100644
              else:
                  logging.error("No fan found with ID {}".format(fan_id))
          return copy.deepcopy(fan_speed_dict)
-@@ -189,13 +202,13 @@ class PrinterFan:
+@@ -189,13 +213,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:
@@ -74,7 +93,7 @@ index 0964ab0a..c5525fda 100644
      def cmd_M107(self, gcmd):
          # Turn fan off
          fan_id = gcmd.get_int('P', None)
-@@ -203,13 +216,13 @@ class PrinterFan:
+@@ -203,13 +227,13 @@ class PrinterFan:
              if fan_id in self.extendable_fan:
                  fan_obj = self.printer.lookup_object("fan_generic {}".format(self.extendable_fan[fan_id]), None)
                  if fan_obj is not None:
@@ -117,3 +136,18 @@ index bc847fa0..78f77a1d 100644
                      fan_state[key] = fan_info[key][1] + ' S{}'.format(fan_value)
          fan_state.update(data_dict)
          self.save_environment_data(self.pl_print_fan_info_env_path, fan_state, sync, flush, safe_write)
+diff --git a/klippy/kinematics/extruder.py b/klippy/kinematics/extruder.py
+index 6978d8a1..f4a34f31 100644
+--- a/klippy/kinematics/extruder.py
++++ b/klippy/kinematics/extruder.py
+@@ -1500,9 +1500,8 @@ class PrinterExtruder:
+ 
+             print_fan = self.printer.lookup_object('fan', None)
+             print_fan_speed = None
+-            current_time = self.printer.get_reactor().monotonic()
+             if print_fan is not None:
+-                print_fan_speed = print_fan.get_status(current_time)['speed']
++                print_fan_speed = print_fan.fan.get_requested_speed()
+                 print_fan.fan.set_speed_from_command(0)
+ 
+             # enable pwm pin in order to detect the extruder gripping state

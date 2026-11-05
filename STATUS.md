@@ -64,10 +64,10 @@
 - **Patch:** `patches/0018-fan-gcode-motion-sync.patch`, credited to alternativniy,
   who reported #18 and pointed to the lookahead fix mainline Klipper uses. G-code fan commands use the motion queue; webhook
   and tool-change fan calls stay immediate. Requested speeds remain available
-  to saved G-code and power-loss state (`get_requested_speed()`). Status keeps
-  the stock `last_fan_value`, set when the lookahead callback schedules the PWM
-  (mainline Klipper's `last_req_value` point), so it shows the old speed while
-  the move is queued and the new one once the PWM is scheduled.
+  to saved G-code and power-loss state (`get_requested_speed()`). Status (M2d)
+  reports a speed only once `estimated_print_time()` reaches its PWM print time,
+  from `(print_time, value)` pairs that `set_speed()` records; the tool change
+  restores `get_requested_speed()`.
 - **Status checks (M2b):** the fixture ends with `M400` + `DRYRUN_FAN_DIAG`;
   `tests/run_issue18.py` requires `status=0.0` while pending (patched) and
   `status=1.0` on the last diag (baseline and patched).
@@ -115,3 +115,8 @@ CI green on `689f315` (run 41671140916) with the #22 full-print proof unchanged.
 M2c #18 (review, 03/11): our mutant `18-m107-immediate` (patch with M107 on the main fan left immediate) passed every M106 check.
 New fixture `issue18-m107.gcode`: fan off edge -4266.239 ms on `93cb12f`, +10.047 ms patched, mutant -4216.239 ms = red.
 Evidence: docs/evidence/issue-18/m107/, docs/evidence/issue-18/mutant-m107-immediate/.
+
+M2d #18 (PR #25 review by alternativniy, 05/11): a status set when the PWM is scheduled runs ahead of the fan by up to the queued move time.
+Status now follows the PWM print time via (print_time, value) pairs (idea from Extended PR #787); the tool change restores get_requested_speed().
+`tests/run_fan_status.py`: PWM at 1.025931 s; status 0.0 at 0.350 s and 1 ms before, 1.0 at the PWM and after M400; previous patch (mutant `18-status-at-schedule`) red.
+New mutant `18-toolchange-reads-status` restores 0.502 (S128 instead of S255) = red; all 6 #18 mutants red; 2.0.0 and 2.1.0.

@@ -27,7 +27,7 @@ on top of custom firmware builds.
 | Issue | What U1 owners see | Status |
 |---|---|---|
 | [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`); upstream draft PR [#24](https://github.com/Snapmaker/u1-klipper/pull/24) |
-| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status and the speed a tool change restores; 4 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
+| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status timed to the PWM and the speed a tool change restores; 6 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
 | [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
 
 Credit for finding and describing each bug goes to the people who filed the
@@ -141,21 +141,37 @@ PWM cycles plus 2 ms for step and scheduling quantization. A second fixture
 next extrusion; with the patch, 10 ms after it. A mutant that leaves `M107`
 immediate (`tests/mutants/18-m107-immediate.patch`) must fail.
 It also checks the fan status the firmware reports: with the patch, status still
-shows the old speed while the move is queued, and shows the new one after `M400`
-(the PWM is then scheduled), as mainline Klipper does. Two mutants that keep the
-PWM on time but get the status wrong (never updated, updated at parse time) must
-fail those checks.
+shows the old speed while the move is queued, and the new one after `M400`. Two
+mutants that keep the PWM on time but get the status wrong (never updated, updated
+at parse time) must fail those checks.
+
+The status changes when the PWM does, not when it is scheduled. alternativniy found this
+reviewing upstream PR #25: the lookahead callback runs when the move is planned, so a status
+set there shows the new speed before the fan changes, by up to the queued move time, and his
+users saw the screen and Fluidd run ahead on hardware. The fix is his idea from Extended PR
+#787, written for this patch: `set_speed()` records `(print_time, value)` once the final print
+time is known (after `FAN_MIN_TIME` spacing and kick-start), and `get_status()` reports a value
+only when `estimated_print_time()` reaches it, dropping the pairs it consumed.
+`tests/run_fan_status.py` (in CI) proves it on the real firmware: `M106 S255` queued behind a
+5 s extrusion, the lookahead flushed so the PWM is scheduled at print time 1.025931 s (e0 PWM
+clock 147,734,025 at 144 MHz), and the status read with the batch-mode MCU clock modeled by
+`DRYRUN_WAIT_MODEL` (the file-output MCU otherwise reports 0): 0.0 at 0.350 s and 1 ms before
+the PWM, 1.0 at the PWM and after `M400`, on 2.0.0 and 2.1.0. The previous version of this
+patch (`tests/mutants/18-status-at-schedule.patch`) shows 1.0 from 0.350 s and fails
+([evidence](docs/evidence/fan-status/), [2.1.0](docs/evidence/2.1.0/fan-status/)).
 
 A tool change right after `M106` restores the last requested speed on the new head
-(`tests/run_toolchange_fan.py`, in CI). alternativniy asked this on Extended PR #787: since the
-status only changes once the PWM is scheduled, could `T1` right after two quick `M106` save a
-stale value? Not with this patch: the U1 tool change (`_cmd_SWITCH_EXTRUDER` in
-`klippy/kinematics/extruder.py`) calls `toolhead.wait_moves()` before it reads the fan status,
-and that flush schedules the queued `M106` first. Measured from the PWM the new head's e1 MCU
-receives, on 2.0.0 and 2.1.0: `M106 S255` then `T1`, and `M106 S64` settled then `M106 S128` +
-`M106 S255` then `T1`, restore 1.0 on stock and patched firmware. A mutant that reads the status
-before that flush (`tests/mutants/18-toolchange-status-before-flush.patch`) restores 0.0 and
-0.251 (the stale S64) and fails ([evidence](docs/evidence/toolchange-fan/summary.txt),
+(`tests/run_toolchange_fan.py`, in CI). alternativniy asked this on Extended PR #787: could `T1`
+right after two quick `M106` save a stale value? Since the status now lags the request, the U1
+tool change (`_cmd_SWITCH_EXTRUDER` in `klippy/kinematics/extruder.py`) restores
+`get_requested_speed()` instead of reading the status, as #787 does. Measured from the PWM the
+new head's e1 MCU receives, on 2.0.0 and 2.1.0, with the MCU clock modeled: `M106 S255` then
+`T1`, and `M106 S64` settled then `M106 S128` + `M106 S255` then `T1`, restore 1.0 on stock and
+patched firmware. A mutant that restores the status (`tests/mutants/18-toolchange-reads-status.patch`)
+restores 0.502 (S128) in the second case: after `wait_moves()` the S255 PWM, 100 ms
+(`FAN_MIN_TIME`) after S128, is still ahead of the MCU clock. A mutant that reads the status
+before `wait_moves()` (`tests/mutants/18-toolchange-status-before-flush.patch`) restores 0.0 in
+both. Both fail ([evidence](docs/evidence/toolchange-fan/summary.txt),
 [2.1.0](docs/evidence/2.1.0/toolchange-fan/summary.txt)).
 
 `tests/firmware/prep_cfg.py` and `tests/firmware/dryrun_tracer.py` are derived
