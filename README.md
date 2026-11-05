@@ -109,9 +109,13 @@ The 10 patches apply in order with the command the Extended build uses
 ([evidence](docs/evidence/extended-2.1.0/)). Checked on the u1-klipper 2.1.0 source, not on the
 firmware image's rootfs. Reproduce: `tests/extended/fetch.sh`, then `apply.sh` and
 `format.sh` in the image (commands in each file), then `python3 tests/extended/prove_extended.py`.
-Offered there as 09/10 in the Klipper overlay, in
+For #18 on the Extended firmware, use
+[pull request #787](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware/pull/787)
+by @alternativniy: the same motion-queue approach, opened there on 15 October and tested on a U1.
+The #22 patch is offered there as 10 in the Klipper overlay, in
 [pull request #869](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware/pull/869),
-so a U1 owner can flash a test build from it.
+so a U1 owner can flash a test build from it; it touches only `exclude_object.py` and, applied
+without the fan patch, `test_issue22` still goes from 3/3 fail to 3/3 pass (5 November).
 
 ## How it works
 
