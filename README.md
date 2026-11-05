@@ -73,6 +73,26 @@ example prints of [u1-dryrun](https://github.com/DesignMaster-Solutions/u1-dryru
 On a print with many overhang fan changes that can leave small marks where it stops. The patch
 has no such cost.
 
+## Start line refused on some toolheads (forum 44046)
+
+In [topic 44046](https://forum.snapmaker.com/t/44046) prints stop right at the start with
+`Move out of range on Y axis: 84.9 -0.09 2.0` (error 0003-0522-0001-0013) on toolheads 1, 3
+and 4, never on 2. There is no firmware bug to patch here, only a 1 mm margin. The firmware sets
+each head's offset to its calibrated base position minus the midpoint of the four heads' range
+(`get_center_base_position` in `klippy/kinematics/extruder.py`), so the lowest head always sits
+at minus half the Y spread, and the stock machine start G-code draws its purge line at
+`G0 X85 Y1`. With a Y spread over 2 mm, a head more than 1 mm below the midpoint is sent under
+`position_min: 0` whenever it is the print's first tool, which is why recalibrating did not
+help: it measures the same spread again.
+
+`tests/run_start_line.py` gives T0 the offset (-0.10, -1.09) on the real firmware and gets the
+reporter's exact error, `84.900 -0.090 2.000`; the same head passes with the line at Y5
+(toolhead Y 3.91), and the high head (+1.09) passes at Y1, on 2.0.0 and 2.1.0
+([evidence](docs/evidence/start-line-44046/)). To check your own heads, ask Moonraker for
+`/printer/objects/query?extruder=extruder_offset&extruder1=extruder_offset&extruder2=extruder_offset&extruder3=extruder_offset`:
+a Y below -1.0 means the stock line fails when that head starts the print. Moving the line to
+Y5 in the machine start G-code, as the reporter did, covers offsets down to -5 mm.
+
 ## On the Extended firmware
 
 The community [Extended firmware](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware)
