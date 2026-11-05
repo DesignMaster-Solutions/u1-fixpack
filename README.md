@@ -93,6 +93,12 @@ reporter's exact error, `84.900 -0.090 2.000`; the same head passes with the lin
 a Y below -1.0 means the stock line fails when that head starts the print. Moving the line to
 Y5 in the machine start G-code, as the reporter did, covers offsets down to -5 mm.
 
+Confirmed on the reporter's physical U1 (firmware 2.1.0, [post 5](https://forum.snapmaker.com/t/44046/5),
+5 November 2026): Moonraker gave Y offsets of -1.129, +1.129, -1.055 and -1.010 for heads 1 to 4. The three
+below -1.0 are the ones that failed, and head 2 never did. The profile change is proposed upstream in
+[Snapmaker/snapmaker-profiles#5](https://github.com/Snapmaker/snapmaker-profiles/pull/5) (the line at Y5 in
+the four U1 nozzle profiles, for [Snapmaker/OrcaSlicer#1143](https://github.com/Snapmaker/OrcaSlicer/issues/1143)).
+
 ## On the Extended firmware
 
 The community [Extended firmware](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware)
