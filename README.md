@@ -48,15 +48,25 @@ like the auxiliary and exhaust fans, are left alone; running it twice adds nothi
 Orca or OrcaSlicer, add `python3 /path/to/fan_m400.py` under Others > Post-processing scripts:
 the slicer passes the G-code file and it is edited in place.
 
-Why it should work, from the stock code at `93cb12f`: `M106`/`M107` schedule the fan at the
-MCU's current time (`klippy/extras/fan.py`, `set_speed_from_command`, line 85), not at the move
-the slicer put them in front of, which is the bug. `M400` (`toolhead.wait_moves`) holds the next
+Why it works, from the stock code at `93cb12f`: `M106`/`M107` schedule the fan at the MCU's
+current time (`klippy/extras/fan.py`, `set_speed_from_command`, line 85), not at the move the
+slicer put them in front of, which is the bug. `M400` (`toolhead.wait_moves`) holds the next
 command until the queued moves are done, so "now" is then the end of that move.
 
-Not measured: in Klipper's batch mode `M400` does not wait (`klippy/toolhead.py` line 556,
-`if not self.can_pause: break`), so this harness shows the same 4366 ms either way and cannot
-prove the workaround. If you try it on a U1, please say in the forum topic or an issue whether
-the fan now switches where the slicer put it, either way.
+Measured on the stock firmware, 2.0.0 and 2.1.0, no patch (`tests/run_fan_m400.py`, in CI):
+
+| #18 fixture | fan on | fan off |
+|---|---|---|
+| as sliced | 4566 ms early | 4466 ms early |
+| after `fan_m400.py` | 240 ms early | 240 ms early |
+
+The 240 ms is the firmware's restart buffer before the next move after a full stop. One caveat on
+the method: in Klipper's batch mode `M400` does not wait (`klippy/toolhead.py` line 556,
+`if not self.can_pause: break`), so both runs enable `DRYRUN_WAIT_MODEL` in
+`tests/firmware/dryrun_tracer.py`, which lets the MCU clock catch up with the drained queue after
+each wait, the exit condition of that loop on the printer. Without the model the harness shows the
+same 4366 ms either way. Not tried on a physical U1 yet: if you do, please say in the forum topic
+or an issue whether the fan now switches where the slicer put it, either way.
 
 Cost: the toolhead stops for a moment at every part-fan change: 73, 45 and 37 stops in the three
 example prints of [u1-dryrun](https://github.com/DesignMaster-Solutions/u1-dryrun/tree/main/examples).

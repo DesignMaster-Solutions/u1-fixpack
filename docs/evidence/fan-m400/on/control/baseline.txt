@@ -1,0 +1,21 @@
+mode=baseline
+firmware_commit=93cb12faebf6e74c51bbc5f0be66e95124af14c8
+firmware_return_code=0
+fixture_sha256=b153783151e5e5c72cc9dd18ab72222143eb5e4895824f96b06057de3e9ac360
+firmware_error_count=0
+MCU 'e0' config: ADC_MAX=4095 BUS_PINS_i2c1=PB6,PB7 BUS_PINS_i2c1a=PB8,PB9 BUS_PINS_i2c2=PB10,PB11 BUS_PINS_spi1=PA6,PA7,PA5 BUS_PINS_spi1a=PB4,PB5,PB3 BUS_PINS_spi2=PB14,PB15,PB13 BUS_PINS_spi3=PB4,PB5,PB3 CLOCK_FREQ=144000000 INITIAL_PINS=PB2,!PB5,PB0,!PB3 MCU=stm32f105xc PWM_MAX=255 RESERVE_PINS_USB=PA11,PA12 STATS_SUMSQ_BASE=256 STEPPER_BOTH_EDGE=1
+11-05 07:14:53.076:DRYRUN wait model on
+11-05 07:14:53.077:DRYRUN fan requested=0.0 status=0.0 saved=None scheduled_time=0.0
+11-05 07:14:53.077:DRYRUN fan requested=1.0 status=1.0 saved=1.0 scheduled_time=0.33000000000000007
+11-05 07:14:53.078:DRYRUN fan requested=1.0 status=1.0 saved=1.0 scheduled_time=0.33000000000000007
+11-05 07:14:53.080:DRYRUN fan requested=1.0 status=1.0 saved=1.0 scheduled_time=0.33000000000000007
+M 0.000 0.000 275.000 0.00000 33.3 0 extruder 0.330 G
+M 10.000 10.000 275.000 0.00000 33.3 0 extruder 0.330 G
+M 140.000 10.000 275.000 0.00000 33.3 0 extruder 0.330 G
+M 140.000 10.000 275.000 10.00000 2.0 0 extruder 1.005 G
+END 11.147
+fan_pin=PB3 fan_oid=8
+e_step_pin=PA8 e_step_oid=5
+mcu_clock_hz=144000000 pwm_cycle_ticks=720000
+fan_edge=on fan_pwm_clock=47520000 first_following_e_step_clock=705058467
+fan_minus_step_ms=-4566.239354 tolerance_ms=12.0

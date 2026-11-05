@@ -94,6 +94,7 @@ class DryrunTracer:
         gcode.register_command("DRYRUN_LINE", self._set_line)
         gcode.register_command("DRYRUN_PRINT_START", self._start_print)
         gcode.register_command("DRYRUN_FAN_DIAG", self._fan_diag)
+        gcode.register_command("DRYRUN_WAIT_MODEL", self._wait_model)
         orig_error = gcode._respond_error
 
         def respond_error(msg):
@@ -153,6 +154,23 @@ class DryrunTracer:
                           (requested,
                            fan.get_status(self.printer.get_reactor().monotonic())["speed"],
                            saved, fan.last_fan_time))
+
+    def _wait_model(self, gcmd):
+        # Batch mode never waits: toolhead.wait_moves breaks out at "if not self.can_pause". On the
+        # printer, M400 returns only once the MCU clock has passed the end of the drained queue (the
+        # exit condition of that loop). Opt-in model of that: after each wait, every MCU's estimated
+        # print time catches up with the toolhead's print time.
+        toolhead, now = self.toolhead, [0.0]
+        orig_wait = toolhead.wait_moves
+
+        def wait_moves():
+            orig_wait()
+            now[0] = max(now[0], toolhead.print_time)
+
+        toolhead.wait_moves = wait_moves
+        for _, mcu in self.printer.lookup_objects("mcu"):
+            mcu.estimated_print_time = (lambda t, orig=mcu.estimated_print_time: max(orig(t), now[0]))
+        gcmd.respond_info("DRYRUN wait model on")
 
     def _set_line(self, gcmd):
         self.line = gcmd.get_int("N")

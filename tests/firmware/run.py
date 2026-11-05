@@ -61,7 +61,7 @@ def run(args):
                           if line.startswith("MCU 'e0' config:")), "")
         error_lines = [line for line in log.splitlines() if "Move out of range on Y axis" in line]
         positions = [line for line in log.splitlines() if line.startswith(("toolhead:", "gcode:"))]
-        diagnostics = [line for line in log.splitlines() if "DRYRUN fan requested=" in line]
+        diagnostics = [line for line in log.splitlines() if "DRYRUN fan requested=" in line or "DRYRUN wait model" in line]
         trace_lines = [line for line in trace.splitlines() if line.startswith(("M ", "ERR ", "END "))]
         summary = [
             "mode=%s" % args.mode,
