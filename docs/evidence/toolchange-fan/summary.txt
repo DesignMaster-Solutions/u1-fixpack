@@ -1,0 +1,6 @@
+toolchange-fan baseline: T1 restored 1.0000 (last M106 1.0000)
+toolchange-fan patched: T1 restored 1.0000 (last M106 1.0000)
+toolchange-fan mutant-status-before-flush: T1 restored 0.0000 (last M106 1.0000)
+toolchange-fan-two baseline: T1 restored 1.0000 (last M106 1.0000)
+toolchange-fan-two patched: T1 restored 1.0000 (last M106 1.0000)
+toolchange-fan-two mutant-status-before-flush: T1 restored 0.2510 (last M106 1.0000)

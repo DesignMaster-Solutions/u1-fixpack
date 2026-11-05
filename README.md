@@ -27,7 +27,7 @@ on top of custom firmware builds.
 | Issue | What U1 owners see | Status |
 |---|---|---|
 | [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`); upstream draft PR [#24](https://github.com/Snapmaker/u1-klipper/pull/24) |
-| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status; 3 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
+| [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status and the speed a tool change restores; 4 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
 | [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
 
 Credit for finding and describing each bug goes to the people who filed the
@@ -145,6 +145,18 @@ shows the old speed while the move is queued, and shows the new one after `M400`
 (the PWM is then scheduled), as mainline Klipper does. Two mutants that keep the
 PWM on time but get the status wrong (never updated, updated at parse time) must
 fail those checks.
+
+A tool change right after `M106` restores the last requested speed on the new head
+(`tests/run_toolchange_fan.py`, in CI). alternativniy asked this on Extended PR #787: since the
+status only changes once the PWM is scheduled, could `T1` right after two quick `M106` save a
+stale value? Not with this patch: the U1 tool change (`_cmd_SWITCH_EXTRUDER` in
+`klippy/kinematics/extruder.py`) calls `toolhead.wait_moves()` before it reads the fan status,
+and that flush schedules the queued `M106` first. Measured from the PWM the new head's e1 MCU
+receives, on 2.0.0 and 2.1.0: `M106 S255` then `T1`, and `M106 S64` settled then `M106 S128` +
+`M106 S255` then `T1`, restore 1.0 on stock and patched firmware. A mutant that reads the status
+before that flush (`tests/mutants/18-toolchange-status-before-flush.patch`) restores 0.0 and
+0.251 (the stale S64) and fails ([evidence](docs/evidence/toolchange-fan/summary.txt),
+[2.1.0](docs/evidence/2.1.0/toolchange-fan/summary.txt)).
 
 `tests/firmware/prep_cfg.py` and `tests/firmware/dryrun_tracer.py` are derived
 from U1 Dry Run under the same GPL-3.0 license. The issue #22 fixture exercises

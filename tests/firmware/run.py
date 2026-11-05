@@ -77,13 +77,15 @@ def run(args):
         ]
         destination = evidence_dir / (args.mode + ".txt")
         destination.write_text("\n".join(summary) + "\n")
-        if args.decode_e0 and (temp / "mcu.out-e0").exists():
+        for name in sorted(set(args.decode + (["e0"] if args.decode_e0 else []))):
+            if not (temp / ("mcu.out-" + name)).exists():
+                continue
             decoded = subprocess.run(
                 ["python3", str(klipper / "klippy/parsedump.py"),
-                 str(DICT_DIR / "at32f415_config.dict"), str(temp / "mcu.out-e0")],
+                 str(DICT_DIR / "at32f415_config.dict"), str(temp / ("mcu.out-" + name))],
                 text=True, capture_output=True, check=True,
             ).stdout
-            (evidence_dir / (args.mode + "-mcu-e0.txt")).write_text(decoded)
+            (evidence_dir / ("%s-mcu-%s.txt" % (args.mode, name))).write_text(decoded)
         print("\n".join(summary))
 
 
@@ -94,6 +96,8 @@ def main():
     parser.add_argument("--patch")
     parser.add_argument("--evidence", required=True)
     parser.add_argument("--decode-e0", action="store_true")
+    parser.add_argument("--decode", action="append", default=[],
+                        choices=("e0", "e1", "e2", "e3"), help="decode this head MCU's output")
     run(parser.parse_args())
 
 
