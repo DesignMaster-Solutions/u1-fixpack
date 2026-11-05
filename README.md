@@ -41,6 +41,28 @@ every mutant fails ([evidence](docs/evidence/2.1.0/)). CI runs every check on bo
 releases. This project adds the printer-free reproduction, the
 patch and the regression test.
 
+## #18 on stock firmware, until the patch ships
+
+`tools/fan_m400.py` puts an `M400` before every part-fan `M106`/`M107` (fans with a `P` index,
+like the auxiliary and exhaust fans, are left alone; running it twice adds nothing). In Snapmaker
+Orca or OrcaSlicer, add `python3 /path/to/fan_m400.py` under Others > Post-processing scripts:
+the slicer passes the G-code file and it is edited in place.
+
+Why it should work, from the stock code at `93cb12f`: `M106`/`M107` schedule the fan at the
+MCU's current time (`klippy/extras/fan.py`, `set_speed_from_command`, line 85), not at the move
+the slicer put them in front of, which is the bug. `M400` (`toolhead.wait_moves`) holds the next
+command until the queued moves are done, so "now" is then the end of that move.
+
+Not measured: in Klipper's batch mode `M400` does not wait (`klippy/toolhead.py` line 556,
+`if not self.can_pause: break`), so this harness shows the same 4366 ms either way and cannot
+prove the workaround. If you try it on a U1, please say in the forum topic or an issue whether
+the fan now switches where the slicer put it, either way.
+
+Cost: the toolhead stops for a moment at every part-fan change: 73, 45 and 37 stops in the three
+example prints of [u1-dryrun](https://github.com/DesignMaster-Solutions/u1-dryrun/tree/main/examples).
+On a print with many overhang fan changes that can leave small marks where it stops. The patch
+has no such cost.
+
 ## On the Extended firmware
 
 The community [Extended firmware](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware)

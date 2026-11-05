@@ -9,6 +9,8 @@ jobs:
         ref: [93cb12faebf6e74c51bbc5f0be66e95124af14c8, 7ac453b50fe6779b2ec0b759038a17da5e6d671d]
     steps:
       - uses: actions/checkout@v4
+      - name: Stock-firmware workaround post-processor
+        run: python3 -m unittest tests.test_fan_m400
       - name: Build the U1 firmware runner at ${{ matrix.ref }}
         run: docker build --build-arg U1_KLIPPER_REF=${{ matrix.ref }} -t u1-fixpack:local .
       - name: Run issue regressions
