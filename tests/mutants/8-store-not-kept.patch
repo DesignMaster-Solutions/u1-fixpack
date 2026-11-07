@@ -1,0 +1,18 @@
+Subject: [MUTANT] #8 fix that keeps the live pressure_advance but still persists the default in flow_calibrator.json
+
+diff --git a/klippy/extras/flow_calibrator.py b/klippy/extras/flow_calibrator.py
+index 43ec0b5b..dc61edb7 100644
+--- a/klippy/extras/flow_calibrator.py
++++ b/klippy/extras/flow_calibrator.py
+@@ -592,7 +592,10 @@ class FlowCalibrator(object):
+                 extruder.nozzle_diameter,
+                 extruder.nozzle_volume_type)
+ 
+-        self._set_pressure_advance(extruder, default_k)
++        # keep the live factor of a head reloaded while paused (the store is still written)
++        pause_resume = self._printer.lookup_object('pause_resume', None)
++        if pause_resume is None or not pause_resume.is_paused:
++            self._set_pressure_advance(extruder, default_k)
+         need_save = False
+         if extruder.get_name() not in self._current_k:
+             need_save = True

@@ -1,0 +1,34 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/8-resume-still-resets.patch
+unittest exit code: 1
+
+test_different_tagged_spool_still_resets_to_its_class_default (test_issue8.Issue8.test_different_tagged_spool_still_resets_to_its_class_default) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+FAIL
+
+======================================================================
+FAIL: test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 67, in test_untagged_spool_fed_back_keeps_the_measured_factor
+    self.assertEqual(k["print-end"], (MEASURED, MEASURED), "live, store after Resume")
+AssertionError: Tuples differ: (0.02, 0.02) != (0.023951, 0.023951)
+
+First differing element 0:
+0.02
+0.023951
+
+- (0.02, 0.02)
++ (0.023951, 0.023951)
+?      ++++      ++++
+ : live, store after Resume
+
+----------------------------------------------------------------------
+Ran 3 tests in 29.169s
+
+FAILED (failures=1)
