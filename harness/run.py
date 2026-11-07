@@ -29,17 +29,17 @@ def prepare_klipper(out, patches):
     shutil.copytree(KLIPPER, dst, symlinks=True, ignore=shutil.ignore_patterns(".git", "out"))
     for p in patches:
         subprocess.run(["git", "apply", "--verbose", os.path.abspath(p)], cwd=dst, check=True)
-    for name in ("dryrun_tracer.py", "fixpack_ui.py"):
+    for name in ("dryrun_tracer.py", "fixpack_ui.py", "fixpack_runout.py"):
         shutil.copy(os.path.join(HERE, name), os.path.join(dst, "klippy/extras/"))
     return dst
 
 
-def prepare_cfg(klipper, out):
+def prepare_cfg(klipper, out, snapmaker=None):
     cfg = os.path.join(out, "cfg")
     prep_cfg.main(os.path.join(klipper, "lava"), cfg)
     with open(os.path.join(cfg, "printer.cfg"), "a") as f:
         # later duplicate sections override earlier ones in Klipper's config parser
-        f.write("\n[fixpack_ui]\n\n[virtual_sdcard]\npath: %s\n" % os.path.join(out, "gcodes"))
+        f.write("\n[fixpack_ui]\n\n[fixpack_runout]\n\n[virtual_sdcard]\npath: %s\n" % os.path.join(out, "gcodes"))
     # A U1 in use has a saved bed mesh, loaded at boot by [delayed_gcode bed_mesh_init]; without
     # one that load is an error and batch mode stops. A flat mesh on the shipped probe grid keeps
     # bed_mesh in the move-transform chain, as on the printer, with zero Z correction.
@@ -48,17 +48,21 @@ def prepare_cfg(klipper, out):
         json.dump({"version": 1, "profile": {"points": [[0.0] * 13 for _ in range(13)], "mesh_params": {
             "min_x": 3.0, "max_x": 267.0, "min_y": 3.0, "max_y": 267.0, "x_count": 13, "y_count": 13,
             "mesh_x_pps": 2, "mesh_y_pps": 2, "algo": "bicubic", "tension": 0.2}}}, f)
+    # Saved state the printer boots with (e.g. a measured flow factor): {file name: JSON object}
+    for name, content in (snapmaker or {}).items():
+        with open(os.path.join(cfg, "snapmaker", name), "w") as f:
+            json.dump(content, f)
     return os.path.join(cfg, "printer.cfg")
 
 
-def run(gcode, out, patches=()):
+def run(gcode, out, patches=(), snapmaker=None):
     out = os.path.abspath(out)
     if os.path.exists(out):
         shutil.rmtree(out)
     os.makedirs(os.path.join(out, "gcodes"))
     shutil.copy(gcode, os.path.join(out, "gcodes", "print.gcode"))
     klipper = prepare_klipper(out, patches)
-    printer_cfg = prepare_cfg(klipper, out)
+    printer_cfg = prepare_cfg(klipper, out, snapmaker)
     cmd = ["python3", os.path.join(klipper, "klippy/klippy.py"), printer_cfg,
            "-i", "/dev/stdin", "-o", os.path.join(out, "mcu.out"), "-v",
            "-l", os.path.join(out, "klippy.log"), "-d", os.path.join(DICTS, "at32f403a_config.dict")]

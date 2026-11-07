@@ -29,9 +29,9 @@ def patches():
 class Print:
     """One print of a G-code file on the firmware under test, and what the firmware said."""
 
-    def __init__(self, gcode, name):
+    def __init__(self, gcode, name, snapmaker=None):
         self.out = os.path.join(OUT, name)
-        self.rc = harness.run(os.path.join(ROOT, gcode), self.out, patches())
+        self.rc = harness.run(os.path.join(ROOT, gcode), self.out, patches(), snapmaker)
         with open(os.path.join(self.out, "responses.txt")) as f:
             self.responses = f.read()
 

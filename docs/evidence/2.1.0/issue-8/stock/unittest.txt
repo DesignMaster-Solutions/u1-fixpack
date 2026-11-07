@@ -1,0 +1,45 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=none
+unittest exit code: 1
+
+test_different_tagged_spool_still_resets_to_its_class_default (test_issue8.Issue8.test_different_tagged_spool_still_resets_to_its_class_default) ... ok
+test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor) ... FAIL
+test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor) ... FAIL
+
+======================================================================
+FAIL: test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 73, in test_same_tagged_spool_fed_back_keeps_the_measured_factor
+    self.assertEqual(k["after-feed"], (MEASURED, MEASURED), "live, store after the spool is fed back")
+AssertionError: Tuples differ: (0.02, 0.02) != (0.023951, 0.023951)
+
+First differing element 0:
+0.02
+0.023951
+
+- (0.02, 0.02)
++ (0.023951, 0.023951)
+?      ++++      ++++
+ : live, store after the spool is fed back
+
+======================================================================
+FAIL: test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 66, in test_untagged_spool_fed_back_keeps_the_measured_factor
+    self.assertEqual(k["after-feed"], (MEASURED, MEASURED), "live, store after the spool is fed back")
+AssertionError: Tuples differ: (0.02, 0.02) != (0.023951, 0.023951)
+
+First differing element 0:
+0.02
+0.023951
+
+- (0.02, 0.02)
++ (0.023951, 0.023951)
+?      ++++      ++++
+ : live, store after the spool is fed back
+
+----------------------------------------------------------------------
+Ran 3 tests in 29.289s
+
+FAILED (failures=2)

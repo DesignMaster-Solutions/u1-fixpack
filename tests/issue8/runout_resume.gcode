@@ -1,0 +1,27 @@
+; U1 Fix Pack - Snapmaker/u1-klipper#8: the active head (e2) runs out mid-print, the user feeds a
+; spool back at the runout prompt and presses Resume. SPOOL is replaced per case by the test.
+T2
+M104 S220 T2 A0 ; above 170 C, so INNER_RESUME takes its purge path
+M140 S60
+G90
+M83
+G1 X100 Y100 Z0.6 F30000
+G1 Z0.2
+FIXPACK_FLOW_K LABEL=print-start
+G1 X140 Y100 E1.5 F3000
+G1 X140 Y140 E1.5 F3000
+G1 X100 Y140 E1.5 F3000
+G1 X100 Y100 E1.5 F3000
+FIXPACK_UI_RUNOUT EXTRUDER=2 SPOOL=@SPOOL@
+G1 X140 Y100 E1.5 F3000
+G1 X140 Y140 E1.5 F3000
+G1 X100 Y140 E1.5 F3000
+G1 X100 Y100 E1.5 F3000
+G1 Z0.4
+G1 X140 Y100 E1.5 F3000
+G1 X140 Y140 E1.5 F3000
+G1 X100 Y140 E1.5 F3000
+G1 X100 Y100 E1.5 F3000
+FIXPACK_FLOW_K LABEL=print-end
+M104 S0 T2 A0
+M140 S0
