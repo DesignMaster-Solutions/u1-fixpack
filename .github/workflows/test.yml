@@ -18,6 +18,7 @@ jobs:
           FIXPACK_FIRMWARE: ${{ matrix.ref }}
         run: |
           python3 tests/run_issue22.py
+          python3 tests/run_issue8.py
           python3 tests/run_issue18.py
           python3 tests/run_fan_status.py
           python3 tests/run_toolchange_fan.py

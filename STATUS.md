@@ -88,24 +88,91 @@
   time) red on the pending check. Detail:
   `docs/evidence/issue-18/review-status-mutant.txt`.
 
+## M3: Snapmaker/u1-klipper#8
+
+- **Where the wipe happens (two places, not one).** The reporter's console shows
+  the factor already at 0.02 at 07:16:07 and `Resuming...` only at 07:16:14;
+  `pause_resume.cmd_RESUME` prints `Resuming...` before it calls `INNER_RESUME`.
+  So the wipe the reporter saw is not the `INNER_CHECK_AND_RELOAD_FILAMENT_INFO`
+  reset the brief pointed at: it is the RFID reader's answer when the spool is
+  fed back, `print_task_config._rfid_filament_info_update_cb` ->
+  `FLOW_RESET_K` (`print_task_config.py:371` on both releases). After a runout
+  the reader first clears the head's info to `NONE` (`is_clear`, no reset);
+  feeding the spool back makes it read the card (an untagged spool reads as the
+  empty card), and that callback resets. Then Resume's
+  `INNER_CHECK_AND_RELOAD_FILAMENT_INFO` (line 886) restores the backup and
+  resets again (for an untagged spool). Patching only line 886, the one the
+  brief named, would leave the wipe the reporter measured (at the feed) in
+  place, so the patch covers both.
+- **Reproduction, entry points.** `harness/fixpack_runout.py`, printed file
+  `tests/issue8/runout_resume.gcode` on e2, the printer booted with the
+  reporter's state (`flow_calibrator.json` e2 = 0.023951, `print_task.json` e2
+  PLA):
+  - runout: `EncoderSensor.encoder_event(t, False)` on
+    `filament_motion_sensor e2_filament`, the callback the head MCU's ADC
+    switch report calls on the printer. While printing, the firmware then
+    waits for the extruder to pull `detection_length` (0.5 mm) and its timer
+    calls `RunoutHelper.note_filament_present(False, True)`. Batch mode's MCU
+    clock stays at 0 (`estimated_print_time` = 0.000, measured), so that timer
+    can never see the extruder move; the harness makes the call the timer
+    makes, with the same arguments, right after the pin event. From there the
+    firmware's own code backs up the filament info, sends
+    `filament_switch_sensor:runout`, and pauses with `PAUSE IS_RUNOUT=1`
+    (`INNER_PAUSE` sets `INNER_RESUME.is_runout`). The switch's 2 s boot
+    hold-off is waited out first (a real print runs for minutes).
+  - RFID reader: batch mode cannot load `fm175xx_reader`/`filament_detect`
+    (`filament_protocol` imports `cryptography`, absent). Its answers go where
+    `filament_detect._filament_info_update` sends them: the callback
+    `print_task_config` registers, from the reactor; "cleared" on removal, the
+    card on insertion (empty card for an untagged spool, or a tag).
+  - reload: `encoder_event(t, True)` after the switch's `event_delay`; Resume:
+    `pause_resume` webhook handler, as Moonraker calls it.
+  - `FLOW_RESET_K` is never called by the harness; the firmware calls it.
+- **Numbers, identical on 93cb12f (2.0.0) and 7ac453b (2.1.0):** stock,
+  untagged spool fed back: e2 live/stored 0.023951/0.023951 before the runout
+  and while paused, 0.020000/0.020000 after the feed and at print end, and
+  `flow_calibrator.json` ends with `"extruder2": 0.02` (the reporter's
+  07:14:48 / 07:16:07 rows). Same with a Snapmaker PLA tag. Red 2/3; the
+  different-filament case (PETG tag) resets to 0.05 and passes, as it should.
+- **Patch:** `patches/0008-runout-resume-keeps-flow-k.patch`, one file, +13/-2.
+  While paused, the reader's answer does not reset the factor if the spool is
+  untagged or its tag names the backed-up vendor/type/sub-type; a different
+  tag still resets. `INNER_CHECK_AND_RELOAD_FILAMENT_INFO` no longer resets when
+  it restores the backup (the reporter's item 1). Outside a pause nothing
+  changes. Green 3/3 on both releases: 0.023951/0.023951 at print end, PETG
+  0.05/0.05.
+- **Mutants, red on both releases:** `8-resume-still-resets` (only the reader
+  path fixed; 1/3 fail, untagged), `8-other-filament-kept` (any spool keeps the
+  factor; 1/3, PETG), `8-store-not-kept` (live value kept, default still
+  persisted; 3/3).
+- **Evidence:** `docs/evidence/issue-8/` (2.0.0) and
+  `docs/evidence/2.1.0/issue-8/`: per variant, `unittest.txt` and per case the
+  console lines with live/stored factor and the final `flow_calibrator.json`.
+  Produced by `tests/run_issue8.py`; `tests/prove.sh` runs `test_issue8.py` too.
+- **Harness changes (shared, defaults unchanged):** `harness/run.py` can seed
+  `cfg/snapmaker/*.json` (`snapmaker=` argument, also on `fixpack.Print`) and
+  loads `[fixpack_runout]`, which is inert unless a file calls its commands.
+- **Follow-ups, not built:** the reporter's items 2 (match by RFID tag UID) and
+  3 (re-measure at resume), the `auto_replenish_filament` path, and the
+  touchscreen edit path (`SET_PRINT_FILAMENT_CONFIG`, line 708), which still
+  resets by design when the user declares a filament.
+- **CI:** @CI8@
+
 ## Remaining
 
 - Physical U1 validation remains to be done before offering the patches upstream.
 
 ## Open questions
 
-- #8 was not attempted. Its reported trigger requires a detected physical runout
-  followed by loading the same spool. Batch mode has no filament sensor; setting
-  `IS_RUNOUT=1` by hand would inject the trigger instead of proving the sensor
-  path. No non-mocked firmware-boundary reproduction was established, so M3
-  remains conditional under the brief.
+- #8: needs a run on a physical U1 (runout, same spool, Resume) with the
+  reporter's Moonraker poll, before the draft PR is marked ready.
 
 ## Five-line summary
 
 M1 #22: full print with real Pause/Resume: red 3/3 on `93cb12f`, green 3/3 patched, 3 mutants red.
 M2 #18: fan timing moves from 4366.239 ms early to 10.047 ms after first step.
 CI: green for both on `d590c9c` (#22 full-print proof added) after `4d3b404` (#18).
-M3 #8: not attempted; batch mode cannot prove the physical runout trigger.
+M3 #8: red 2/3 on 93cb12f and 7ac453b (0.023951 -> 0.020000 live and stored at the feed), green 3/3 patched, 3 mutants red.
 Next: validate both patches on a physical U1 before any upstream offer.
 
 M2b #18: status is now the stock last_fan_value set when the PWM is scheduled (mainline Klipper semantics); the status queue is gone.

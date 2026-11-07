@@ -28,11 +28,13 @@ on top of custom firmware builds.
 |---|---|---|
 | [u1-klipper#22](https://github.com/Snapmaker/u1-klipper/issues/22) | Skip an object, pause, and Resume fails with "Move out of range" | patched; red on 93cb12f, green with the patch, 3 mutants red, in a full print with the real Pause/Resume macros (`tests/test_issue22.py`); upstream draft PR [#24](https://github.com/Snapmaker/u1-klipper/pull/24) |
 | [u1-klipper#18](https://github.com/Snapmaker/u1-klipper/issues/18) | Part cooling fan switches 2-4 s before the toolhead reaches the M106/M107 | patch and red/green/mutant proof for both edges (M106 on and M107 off PWM clocks, plus fan status timed to the PWM and the speed a tool change restores; 6 mutants red); see STATUS.md for CI; upstream draft PR [#25](https://github.com/Snapmaker/u1-klipper/pull/25) |
-| [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | conditional; not reproduced |
+| [u1-klipper#8](https://github.com/Snapmaker/u1-klipper/issues/8) | Runout + resume replaces the head's measured flow calibration with the default | patched; red on 2.0.0 and 2.1.0 (factor 0.023951 becomes 0.020000, live and in `flow_calibrator.json`, when the spool is fed back), green with the patch, 3 mutants red, in a full print with the real runout, reload and Resume path (`tests/test_issue8.py`); upstream draft PR @PR8@ |
 
 Credit for finding and describing each bug goes to the people who filed the
 issues: alternativniy (#18, who also traced the root cause and pointed to the
-mainline fix) and SwineFlew931 (#22, who also proposed the fix the patch implements).
+mainline fix), SwineFlew931 (#22, who also proposed the fix the patch implements) and
+mmunchinski (#8, whose 5-second poll of the live and stored factor located the wipe and
+whose minimum policy the patch implements).
 Both patches are proven on 93cb12f (2.0.0) and on 7ac453b (2.1.0, released 4 November
 2026, now upstream main), which does not touch these files: on stock 2.1.0 #22 still
 stops with the same `Move out of range on Y axis: 53.641 445.274 7.000` and #18 still
