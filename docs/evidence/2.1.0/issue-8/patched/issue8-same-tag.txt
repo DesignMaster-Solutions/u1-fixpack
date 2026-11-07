@@ -1,0 +1,16 @@
+// park extruder !!!
+// pick extruder2 !!!
+// FIXPACK: flow_k print-start extruder2 live=0.023951 store=0.023951
+// FIXPACK: flow_k before-runout extruder2 live=0.023951 store=0.023951
+// FIXPACK: e2 filament runs out
+// Pausing...
+// FIXPACK: flow_k runout-paused extruder2 live=0.023951 store=0.023951
+// FIXPACK: user feeds the spool back (Snapmaker:PLA:Basic:900001)
+// FIXPACK: flow_k after-feed extruder2 live=0.023951 store=0.023951
+// FIXPACK: user presses Resume
+// Resuming...
+// FIXPACK: flow_k print-end extruder2 live=0.023951 store=0.023951
+FIXPACK: print ended, state complete
+
+snapmaker/flow_calibrator.json at print end:
+{"factor": {"extruder": 0.02, "extruder1": 0.02, "extruder2": 0.023951, "extruder3": 0.02}, "env": {"k_min": 0.005, "k_max": 0.065, "k_step": 0.005, "start_vel": 4, "start_dist": 20, "slow_vel": 0.8, "slow_dist": 0.8, "fast_dist": 2, "fast_vel": 8, "accel": 200, "loop": 14}}

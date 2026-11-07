@@ -1,0 +1,17 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=patches/0008-runout-resume-keeps-flow-k.patch
+unittest exit code: 0
+
+test_different_tagged_spool_still_resets_to_its_class_default (test_issue8.Issue8.test_different_tagged_spool_still_resets_to_its_class_default) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 29.464s
+
+OK
