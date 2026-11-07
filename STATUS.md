@@ -156,7 +156,12 @@
   3 (re-measure at resume), the `auto_replenish_filament` path, and the
   touchscreen edit path (`SET_PRINT_FILAMENT_CONFIG`, line 708), which still
   resets by design when the user declares a filament.
-- **CI:** @CI8@
+- **CI:** green on commit `199b76d`, both releases (run
+  [42400823932](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/42400823932)):
+  `run_issue8.py` and `prove.sh` report stock red, patched green, 3 mutants red
+  on 93cb12f and 7ac453b. Upstream draft PR
+  [Snapmaker/u1-klipper#27](https://github.com/Snapmaker/u1-klipper/pull/27) from
+  `DesignMaster-Solutions:fix-8-runout-keeps-flow-k`.
 
 ## Remaining
 
