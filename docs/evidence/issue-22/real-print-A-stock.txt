@@ -1,0 +1,692 @@
+u1-klipper#22: abehrman's print file replayed through the firmware in batch mode (harness/run.py)
+file: 2026-10-27_K_rper_182_(3)_PETG_4h25m.gcode (https://gist.github.com/abehrman/4fcabd84dc57d5197168635d14e249ac, unmodified as printed on a stock U1 2.0.0.205)
+sha256: 228f0b86603b902fe34ad7a086397377fc2af999eb5afcdb1fd88ad12374bcfe
+prepared with: tests/issue22/replay_real.py <file> <out> 7916749=K_RPER_07__1_ID_17_COPY_0,K_RPER_07__1_ID_18_COPY_0 T4=T3
+firmware: u1-klipper 93cb12f (2.0.0) as shipped
+run: docker run --rm -v $PWD:/fixpack -v <dir>:/gcode -e U1_TIMEOUT_S=3000 --entrypoint python3 u1-fixpack:local /fixpack/harness/run.py /gcode/A.gcode /gcode/A-stock [--patch /fixpack/patches/0022-exclude-object-manual-move.patch]
+
+== tests/issue22/replay_report.py
+== A-stock: 69 GET_POSITION, 34 tool changes
+  tool changes where gcode != toolhead or the prime moved the head: 0
+  // Excluding object K_RPER_07__1_ID_17_COPY_0
+  // Excluding object K_RPER_07__1_ID_18_COPY_0
+  !! Move out of range on Y axis: 81.489 337.635 10.850 [12199.502]
+
+== responses.txt (the firmware console, complete)
+// Klipper state: Ready
+// Power loss module not detected, Power resume has been disabled
+File opened:print.gcode Size:19004773
+File selected
+// Success: Changed main state to PRINTING
+// extruder -> extruder1
+// park extruder !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-327660
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:1.950000
+// kinematic: X:92.700000 Y:298.415625 Z:1.950000
+// toolhead: X:92.700000 Y:300.500000 Z:1.950000 E:1516.591760
+// gcode: X:92.700000 Y:300.500000 Z:1.950000 E:1516.591760
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:1516.591760
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-327660
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:1.950000
+// kinematic: X:92.700000 Y:298.415625 Z:1.950000
+// toolhead: X:92.700000 Y:300.500000 Z:1.950000 E:1526.591760
+// gcode: X:92.700000 Y:300.500000 Z:1.950000 E:1526.591760
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:1516.591760
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// [['extruder1', 0], ['PARKED', 'ACTIVATE', 'PARKED', 'PARKED'], [[True, False, False], [False, True, True], [True, False, False], [True, False, False]]]
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-327420
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:2.150000
+// kinematic: X:227.700000 Y:298.415625 Z:2.150000
+// toolhead: X:227.700000 Y:300.500000 Z:2.150000 E:10.554530
+// gcode: X:227.700000 Y:300.500000 Z:2.150000 E:10.554530
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10.554530
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-327420
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:2.150000
+// kinematic: X:227.700000 Y:298.415625 Z:2.150000
+// toolhead: X:227.700000 Y:300.500000 Z:2.150000 E:20.554530
+// gcode: X:227.700000 Y:300.500000 Z:2.150000 E:20.554530
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10.554530
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-327180
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:2.350000
+// kinematic: X:92.700000 Y:298.415625 Z:2.350000
+// toolhead: X:92.700000 Y:300.500000 Z:2.350000 E:3151.956120
+// gcode: X:92.700000 Y:300.500000 Z:2.350000 E:3151.956120
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:3151.956120
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-327180
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:2.350000
+// kinematic: X:92.700000 Y:298.415625 Z:2.350000
+// toolhead: X:92.700000 Y:300.500000 Z:2.350000 E:3161.956120
+// gcode: X:92.700000 Y:300.500000 Z:2.350000 E:3161.956120
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:3151.956120
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168675 stepper_y:-22947 stepper_z:-326220
+// stepper: stepper_x:527.109375 stepper_y:-71.709375 stepper_z:3.150000
+// kinematic: X:227.700000 Y:299.409375 Z:3.150000
+// toolhead: X:227.700000 Y:300.500000 Z:3.150000 E:40.627730
+// gcode: X:227.700000 Y:300.500000 Z:3.150000 E:40.627730
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:40.627730
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168675 stepper_y:-22947 stepper_z:-326220
+// stepper: stepper_x:527.109375 stepper_y:-71.709375 stepper_z:3.150000
+// kinematic: X:227.700000 Y:299.409375 Z:3.150000
+// toolhead: X:227.700000 Y:300.500000 Z:3.150000 E:50.627730
+// gcode: X:227.700000 Y:300.500000 Z:3.150000 E:50.627730
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:40.627730
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325980
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:3.350000
+// kinematic: X:92.700000 Y:298.415625 Z:3.350000
+// toolhead: X:92.700000 Y:300.500000 Z:3.350000 E:5229.608040
+// gcode: X:92.700000 Y:300.500000 Z:3.350000 E:5229.608040
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:5229.608040
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325980
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:3.350000
+// kinematic: X:92.700000 Y:298.415625 Z:3.350000
+// toolhead: X:92.700000 Y:300.500000 Z:3.350000 E:5239.608040
+// gcode: X:92.700000 Y:300.500000 Z:3.350000 E:5239.608040
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:5229.608040
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168675 stepper_y:-22947 stepper_z:-325740
+// stepper: stepper_x:527.109375 stepper_y:-71.709375 stepper_z:3.550000
+// kinematic: X:227.700000 Y:299.409375 Z:3.550000
+// toolhead: X:227.700000 Y:300.500000 Z:3.550000 E:143.471480
+// gcode: X:227.700000 Y:300.500000 Z:3.550000 E:143.471480
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:143.471480
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168675 stepper_y:-22947 stepper_z:-325740
+// stepper: stepper_x:527.109375 stepper_y:-71.709375 stepper_z:3.550000
+// kinematic: X:227.700000 Y:299.409375 Z:3.550000
+// toolhead: X:227.700000 Y:300.500000 Z:3.550000 E:153.471480
+// gcode: X:227.700000 Y:300.500000 Z:3.550000 E:153.471480
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:143.471480
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325500
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:3.750000
+// kinematic: X:92.700000 Y:298.415625 Z:3.750000
+// toolhead: X:92.700000 Y:300.500000 Z:3.750000 E:5686.709870
+// gcode: X:92.700000 Y:300.500000 Z:3.750000 E:5686.709870
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:5686.709870
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325500
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:3.750000
+// kinematic: X:92.700000 Y:298.415625 Z:3.750000
+// toolhead: X:92.700000 Y:300.500000 Z:3.750000 E:5696.709870
+// gcode: X:92.700000 Y:300.500000 Z:3.750000 E:5696.709870
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:5686.709870
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-325260
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:3.950000
+// kinematic: X:227.700000 Y:298.415625 Z:3.950000
+// toolhead: X:227.700000 Y:300.500000 Z:3.950000 E:218.270590
+// gcode: X:227.700000 Y:300.500000 Z:3.950000 E:218.270590
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:218.270590
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-325260
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:3.950000
+// kinematic: X:227.700000 Y:298.415625 Z:3.950000
+// toolhead: X:227.700000 Y:300.500000 Z:3.950000 E:228.270590
+// gcode: X:227.700000 Y:300.500000 Z:3.950000 E:228.270590
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:218.270590
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325020
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.150000
+// kinematic: X:92.700000 Y:298.415625 Z:4.150000
+// toolhead: X:92.700000 Y:300.500000 Z:4.150000 E:6368.730440
+// gcode: X:92.700000 Y:300.500000 Z:4.150000 E:6368.730440
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:6368.730440
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-325020
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.150000
+// kinematic: X:92.700000 Y:298.415625 Z:4.150000
+// toolhead: X:92.700000 Y:300.500000 Z:4.150000 E:6378.730440
+// gcode: X:92.700000 Y:300.500000 Z:4.150000 E:6378.730440
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:6368.730440
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-324780
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:4.350000
+// kinematic: X:227.700000 Y:298.415625 Z:4.350000
+// toolhead: X:227.700000 Y:300.500000 Z:4.350000 E:256.880820
+// gcode: X:227.700000 Y:300.500000 Z:4.350000 E:256.880820
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:256.880820
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-324780
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:4.350000
+// kinematic: X:227.700000 Y:298.415625 Z:4.350000
+// toolhead: X:227.700000 Y:300.500000 Z:4.350000 E:266.880820
+// gcode: X:227.700000 Y:300.500000 Z:4.350000 E:266.880820
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:256.880820
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-324540
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.550000
+// kinematic: X:92.700000 Y:298.415625 Z:4.550000
+// toolhead: X:92.700000 Y:300.500000 Z:4.550000 E:6978.655000
+// gcode: X:92.700000 Y:300.500000 Z:4.550000 E:6978.655000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:6978.655000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-324540
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.550000
+// kinematic: X:92.700000 Y:298.415625 Z:4.550000
+// toolhead: X:92.700000 Y:300.500000 Z:4.550000 E:6988.655000
+// gcode: X:92.700000 Y:300.500000 Z:4.550000 E:6988.655000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:6978.655000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-324300
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:4.750000
+// kinematic: X:227.700000 Y:298.415625 Z:4.750000
+// toolhead: X:227.700000 Y:300.500000 Z:4.750000 E:293.503250
+// gcode: X:227.700000 Y:300.500000 Z:4.750000 E:293.503250
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:293.503250
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-324300
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:4.750000
+// kinematic: X:227.700000 Y:298.415625 Z:4.750000
+// toolhead: X:227.700000 Y:300.500000 Z:4.750000 E:303.503250
+// gcode: X:227.700000 Y:300.500000 Z:4.750000 E:303.503250
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:293.503250
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-324300
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.750000
+// kinematic: X:92.700000 Y:298.415625 Z:4.750000
+// toolhead: X:92.700000 Y:300.500000 Z:4.750000 E:7526.903620
+// gcode: X:92.700000 Y:300.500000 Z:4.750000 E:7526.903620
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:7526.903620
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-324300
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:4.750000
+// kinematic: X:92.700000 Y:298.415625 Z:4.750000
+// toolhead: X:92.700000 Y:300.500000 Z:4.750000 E:7536.903620
+// gcode: X:92.700000 Y:300.500000 Z:4.750000 E:7536.903620
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:7526.903620
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-323820
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.150000
+// kinematic: X:227.700000 Y:298.415625 Z:5.150000
+// toolhead: X:227.700000 Y:300.500000 Z:5.150000 E:313.278780
+// gcode: X:227.700000 Y:300.500000 Z:5.150000 E:313.278780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:313.278780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-323820
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.150000
+// kinematic: X:227.700000 Y:298.415625 Z:5.150000
+// toolhead: X:227.700000 Y:300.500000 Z:5.150000 E:323.278780
+// gcode: X:227.700000 Y:300.500000 Z:5.150000 E:323.278780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:313.278780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-323580
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.350000
+// kinematic: X:92.700000 Y:298.415625 Z:5.350000
+// toolhead: X:92.700000 Y:300.500000 Z:5.350000 E:7984.292050
+// gcode: X:92.700000 Y:300.500000 Z:5.350000 E:7984.292050
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:7984.292050
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-323580
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.350000
+// kinematic: X:92.700000 Y:298.415625 Z:5.350000
+// toolhead: X:92.700000 Y:300.500000 Z:5.350000 E:7994.292050
+// gcode: X:92.700000 Y:300.500000 Z:5.350000 E:7994.292050
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:7984.292050
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-323340
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.550000
+// kinematic: X:227.700000 Y:298.415625 Z:5.550000
+// toolhead: X:227.700000 Y:300.500000 Z:5.550000 E:337.239560
+// gcode: X:227.700000 Y:300.500000 Z:5.550000 E:337.239560
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:337.239560
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-323340
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.550000
+// kinematic: X:227.700000 Y:298.415625 Z:5.550000
+// toolhead: X:227.700000 Y:300.500000 Z:5.550000 E:347.239560
+// gcode: X:227.700000 Y:300.500000 Z:5.550000 E:347.239560
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:337.239560
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-323340
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.550000
+// kinematic: X:92.700000 Y:298.415625 Z:5.550000
+// toolhead: X:92.700000 Y:300.500000 Z:5.550000 E:8421.467780
+// gcode: X:92.700000 Y:300.500000 Z:5.550000 E:8421.467780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:8421.467780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-323340
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.550000
+// kinematic: X:92.700000 Y:298.415625 Z:5.550000
+// toolhead: X:92.700000 Y:300.500000 Z:5.550000 E:8431.467780
+// gcode: X:92.700000 Y:300.500000 Z:5.550000 E:8431.467780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:8421.467780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-322860
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.950000
+// kinematic: X:227.700000 Y:298.415625 Z:5.950000
+// toolhead: X:227.700000 Y:300.500000 Z:5.950000 E:358.922930
+// gcode: X:227.700000 Y:300.500000 Z:5.950000 E:358.922930
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:358.922930
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-322860
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:5.950000
+// kinematic: X:227.700000 Y:298.415625 Z:5.950000
+// toolhead: X:227.700000 Y:300.500000 Z:5.950000 E:368.922930
+// gcode: X:227.700000 Y:300.500000 Z:5.950000 E:368.922930
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:358.922930
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-322860
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.950000
+// kinematic: X:92.700000 Y:298.415625 Z:5.950000
+// toolhead: X:92.700000 Y:300.500000 Z:5.950000 E:9125.394580
+// gcode: X:92.700000 Y:300.500000 Z:5.950000 E:9125.394580
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:9125.394580
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-322860
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:5.950000
+// kinematic: X:92.700000 Y:298.415625 Z:5.950000
+// toolhead: X:92.700000 Y:300.500000 Z:5.950000 E:9135.394580
+// gcode: X:92.700000 Y:300.500000 Z:5.950000 E:9135.394580
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:9125.394580
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-322380
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:6.350000
+// kinematic: X:227.700000 Y:298.415625 Z:6.350000
+// toolhead: X:227.700000 Y:300.500000 Z:6.350000 E:379.736220
+// gcode: X:227.700000 Y:300.500000 Z:6.350000 E:379.736220
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:379.736220
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-322380
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:6.350000
+// kinematic: X:227.700000 Y:298.415625 Z:6.350000
+// toolhead: X:227.700000 Y:300.500000 Z:6.350000 E:389.736220
+// gcode: X:227.700000 Y:300.500000 Z:6.350000 E:389.736220
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:379.736220
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-322140
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:6.550000
+// kinematic: X:92.700000 Y:298.415625 Z:6.550000
+// toolhead: X:92.700000 Y:300.500000 Z:6.550000 E:9787.705740
+// gcode: X:92.700000 Y:300.500000 Z:6.550000 E:9787.705740
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:9787.705740
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-322140
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:6.550000
+// kinematic: X:92.700000 Y:298.415625 Z:6.550000
+// toolhead: X:92.700000 Y:300.500000 Z:6.550000 E:9797.705740
+// gcode: X:92.700000 Y:300.500000 Z:6.550000 E:9797.705740
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:9787.705740
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-321900
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:6.750000
+// kinematic: X:227.700000 Y:298.415625 Z:6.750000
+// toolhead: X:227.700000 Y:300.500000 Z:6.750000 E:400.430810
+// gcode: X:227.700000 Y:300.500000 Z:6.750000 E:400.430810
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:400.430810
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-321900
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:6.750000
+// kinematic: X:227.700000 Y:298.415625 Z:6.750000
+// toolhead: X:227.700000 Y:300.500000 Z:6.750000 E:410.430810
+// gcode: X:227.700000 Y:300.500000 Z:6.750000 E:410.430810
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:400.430810
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-321660
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:6.950000
+// kinematic: X:92.700000 Y:298.415625 Z:6.950000
+// toolhead: X:92.700000 Y:300.500000 Z:6.950000 E:10301.385650
+// gcode: X:92.700000 Y:300.500000 Z:6.950000 E:10301.385650
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10301.385650
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-321660
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:6.950000
+// kinematic: X:92.700000 Y:298.415625 Z:6.950000
+// toolhead: X:92.700000 Y:300.500000 Z:6.950000 E:10311.385650
+// gcode: X:92.700000 Y:300.500000 Z:6.950000 E:10311.385650
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10301.385650
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-321420
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.150000
+// kinematic: X:227.700000 Y:298.415625 Z:7.150000
+// toolhead: X:227.700000 Y:300.500000 Z:7.150000 E:421.944160
+// gcode: X:227.700000 Y:300.500000 Z:7.150000 E:421.944160
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:421.944160
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-321420
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.150000
+// kinematic: X:227.700000 Y:298.415625 Z:7.150000
+// toolhead: X:227.700000 Y:300.500000 Z:7.150000 E:431.944160
+// gcode: X:227.700000 Y:300.500000 Z:7.150000 E:431.944160
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:421.944160
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-321180
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:7.350000
+// kinematic: X:92.700000 Y:298.415625 Z:7.350000
+// toolhead: X:92.700000 Y:300.500000 Z:7.350000 E:10649.213920
+// gcode: X:92.700000 Y:300.500000 Z:7.350000 E:10649.213920
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10649.213920
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-321180
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:7.350000
+// kinematic: X:92.700000 Y:298.415625 Z:7.350000
+// toolhead: X:92.700000 Y:300.500000 Z:7.350000 E:10659.213920
+// gcode: X:92.700000 Y:300.500000 Z:7.350000 E:10659.213920
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10649.213920
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320940
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.550000
+// kinematic: X:227.700000 Y:298.415625 Z:7.550000
+// toolhead: X:227.700000 Y:300.500000 Z:7.550000 E:444.473210
+// gcode: X:227.700000 Y:300.500000 Z:7.550000 E:444.473210
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:444.473210
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320940
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.550000
+// kinematic: X:227.700000 Y:298.415625 Z:7.550000
+// toolhead: X:227.700000 Y:300.500000 Z:7.550000 E:454.473210
+// gcode: X:227.700000 Y:300.500000 Z:7.550000 E:454.473210
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:444.473210
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-320700
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:7.750000
+// kinematic: X:92.700000 Y:298.415625 Z:7.750000
+// toolhead: X:92.700000 Y:300.500000 Z:7.750000 E:10976.065630
+// gcode: X:92.700000 Y:300.500000 Z:7.750000 E:10976.065630
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10976.065630
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-320700
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:7.750000
+// kinematic: X:92.700000 Y:298.415625 Z:7.750000
+// toolhead: X:92.700000 Y:300.500000 Z:7.750000 E:10986.065630
+// gcode: X:92.700000 Y:300.500000 Z:7.750000 E:10986.065630
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:10976.065630
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320460
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.950000
+// kinematic: X:227.700000 Y:298.415625 Z:7.950000
+// toolhead: X:227.700000 Y:300.500000 Z:7.950000 E:466.435060
+// gcode: X:227.700000 Y:300.500000 Z:7.950000 E:466.435060
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:466.435060
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320460
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.950000
+// kinematic: X:227.700000 Y:298.415625 Z:7.950000
+// toolhead: X:227.700000 Y:300.500000 Z:7.950000 E:476.435060
+// gcode: X:227.700000 Y:300.500000 Z:7.950000 E:476.435060
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:466.435060
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-320220
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.150000
+// kinematic: X:92.700000 Y:298.415625 Z:8.150000
+// toolhead: X:92.700000 Y:300.500000 Z:8.150000 E:11312.241470
+// gcode: X:92.700000 Y:300.500000 Z:8.150000 E:11312.241470
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11312.241470
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-320220
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.150000
+// kinematic: X:92.700000 Y:298.415625 Z:8.150000
+// toolhead: X:92.700000 Y:300.500000 Z:8.150000 E:11322.241470
+// gcode: X:92.700000 Y:300.500000 Z:8.150000 E:11322.241470
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11312.241470
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-319980
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:8.350000
+// kinematic: X:227.700000 Y:298.415625 Z:8.350000
+// toolhead: X:227.700000 Y:300.500000 Z:8.350000 E:498.870710
+// gcode: X:227.700000 Y:300.500000 Z:8.350000 E:498.870710
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:498.870710
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-319980
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:8.350000
+// kinematic: X:227.700000 Y:298.415625 Z:8.350000
+// toolhead: X:227.700000 Y:300.500000 Z:8.350000 E:508.870710
+// gcode: X:227.700000 Y:300.500000 Z:8.350000 E:508.870710
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:498.870710
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-319740
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.550000
+// kinematic: X:92.700000 Y:298.415625 Z:8.550000
+// toolhead: X:92.700000 Y:300.500000 Z:8.550000 E:11597.140940
+// gcode: X:92.700000 Y:300.500000 Z:8.550000 E:11597.140940
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11597.140940
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-319740
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.550000
+// kinematic: X:92.700000 Y:298.415625 Z:8.550000
+// toolhead: X:92.700000 Y:300.500000 Z:8.550000 E:11607.140940
+// gcode: X:92.700000 Y:300.500000 Z:8.550000 E:11607.140940
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11597.140940
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-319500
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:8.750000
+// kinematic: X:227.700000 Y:298.415625 Z:8.750000
+// toolhead: X:227.700000 Y:300.500000 Z:8.750000 E:545.826780
+// gcode: X:227.700000 Y:300.500000 Z:8.750000 E:545.826780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:545.826780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-319500
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:8.750000
+// kinematic: X:227.700000 Y:298.415625 Z:8.750000
+// toolhead: X:227.700000 Y:300.500000 Z:8.750000 E:555.826780
+// gcode: X:227.700000 Y:300.500000 Z:8.750000 E:555.826780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:545.826780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-319500
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.750000
+// kinematic: X:92.700000 Y:298.415625 Z:8.750000
+// toolhead: X:92.700000 Y:300.500000 Z:8.750000 E:11891.029780
+// gcode: X:92.700000 Y:300.500000 Z:8.750000 E:11891.029780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11891.029780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-319500
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:8.750000
+// kinematic: X:92.700000 Y:298.415625 Z:8.750000
+// toolhead: X:92.700000 Y:300.500000 Z:8.750000 E:11901.029780
+// gcode: X:92.700000 Y:300.500000 Z:8.750000 E:11901.029780
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:11891.029780
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// pressure_advance: 0.028180
+// pressure_advance_smooth_time: 0.040000
+// Excluding object K_RPER_07__1_ID_17_COPY_0
+// Excluding object K_RPER_07__1_ID_18_COPY_0
+// extruder1 -> extruder3
+// park extruder1 !!!
+// pick extruder3 !!!
+// Activating extruder extruder3
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320820
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.650000
+// kinematic: X:227.700000 Y:298.415625 Z:7.650000
+// toolhead: X:227.700000 Y:300.500000 Z:7.650000 E:568.906680
+// gcode: X:227.700000 Y:300.500000 Z:7.650000 E:568.906680
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:568.906680
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:168357 stepper_y:-22629 stepper_z:-320820
+// stepper: stepper_x:526.115625 stepper_y:-70.715625 stepper_z:7.650000
+// kinematic: X:227.700000 Y:298.415625 Z:7.650000
+// toolhead: X:227.700000 Y:300.500000 Z:7.650000 E:568.906680
+// gcode: X:227.700000 Y:300.500000 Z:7.650000 E:578.906680
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:568.906680
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder3 -> extruder1
+// park extruder3 !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:125157 stepper_y:-65829 stepper_z:-318780
+// stepper: stepper_x:391.115625 stepper_y:-205.715625 stepper_z:9.350000
+// kinematic: X:92.700000 Y:298.415625 Z:9.350000
+// toolhead: X:92.700000 Y:300.500000 Z:9.350000 E:12189.502360
+// gcode: X:81.489000 Y:337.635000 Z:10.850000 E:12185.849580
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:12185.849580
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+!! Move out of range on Y axis: 81.489 337.635 10.850 [12199.502]
+// Klipper state: Disconnect

@@ -53,6 +53,18 @@
   case on `ba7d321` (run
   [42543618847](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/42543618847),
   2.0.0 and 2.1.0).
+- **Real prints (09/11):** the two files abehrman lost on his stock U1 (2.0.0.205,
+  gist 4fcabd84) replayed unmodified through the firmware with
+  `tests/issue22/replay_real.py` (start block replaced, Skip injected at the
+  sd_pos his klippy.log gives, GET_POSITION around every chute prime, T4 on
+  extruder3). Stock: 2026-10-27 stops at the 35th tool change with
+  `Move out of range on Y axis: 81.489 337.635 10.850` (his log: 148.989 337.635
+  10.874; same Y, same stale offset -11.211/+37.135, X differs by his T1 chute
+  X); 2026-11-01 has no error and at the 26th tool change the chute prime moves
+  the head to X28.113 Y202.421 (his "about (28.1, 202.4)"). Patched: 143/143 and
+  61/61 tool changes keep gcode == toolhead, both prints end `complete`.
+  Evidence: `docs/evidence/issue-22/real-print-{A,B}-{stock,patched}.txt`
+  (`tests/issue22/replay_report.py` summary plus the full firmware console).
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
   `tests/fixtures/issue22.gcode`, `baseline/patched/mutant.txt`) still passes
   with the replaced patch.
@@ -191,7 +203,7 @@
 
 ## Five-line summary
 
-M1 #22: full print with real Pause/Resume: red 3/3 on `93cb12f`, green 3/3 patched, 3 mutants red.
+M1 #22: full print with real Pause/Resume: red 3/3 on `93cb12f`, green 3/3 patched, 3 mutants red; abehrman's two lost prints replayed: stock reproduces both faults, patched completes both.
 M2 #18: fan timing moves from 4366.239 ms early to 10.047 ms after first step.
 CI: green for both on `d590c9c` (#22 full-print proof added) after `4d3b404` (#18).
 M3 #8: red 2/3 on 93cb12f and 7ac453b (0.023951 -> 0.020000 live and stored at the feed), green 3/3 patched, 3 mutants red.
