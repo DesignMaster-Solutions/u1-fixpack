@@ -1,0 +1,68 @@
+firmware: u1-klipper 93cb12fa Release firmware version 2.0.0, FIXPACK_PATCHES=tests/mutants/8-store-not-kept.patch
+expected: fail; unittest exit code: 1 (ok)
+
+test_different_tagged_spool_still_resets_to_its_class_default (test_issue8.Issue8.test_different_tagged_spool_still_resets_to_its_class_default) ... Checking patch klippy/extras/flow_calibrator.py...
+Applied patch klippy/extras/flow_calibrator.py cleanly.
+FAIL
+test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/flow_calibrator.py...
+Applied patch klippy/extras/flow_calibrator.py cleanly.
+FAIL
+test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor) ... Checking patch klippy/extras/flow_calibrator.py...
+Applied patch klippy/extras/flow_calibrator.py cleanly.
+FAIL
+
+======================================================================
+FAIL: test_different_tagged_spool_still_resets_to_its_class_default (test_issue8.Issue8.test_different_tagged_spool_still_resets_to_its_class_default)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 82, in test_different_tagged_spool_still_resets_to_its_class_default
+    self.assertEqual(k["after-feed"], (PETG_DEFAULT, PETG_DEFAULT))
+AssertionError: Tuples differ: (0.023951, 0.05) != (0.05, 0.05)
+
+First differing element 0:
+0.023951
+0.05
+
+- (0.023951, 0.05)
+?     --- -
+
++ (0.05, 0.05)
+
+======================================================================
+FAIL: test_same_tagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_same_tagged_spool_fed_back_keeps_the_measured_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 73, in test_same_tagged_spool_fed_back_keeps_the_measured_factor
+    self.assertEqual(k["after-feed"], (MEASURED, MEASURED), "live, store after the spool is fed back")
+AssertionError: Tuples differ: (0.023951, 0.02) != (0.023951, 0.023951)
+
+First differing element 1:
+0.02
+0.023951
+
+- (0.023951, 0.02)
++ (0.023951, 0.023951)
+?                ++++
+ : live, store after the spool is fed back
+
+======================================================================
+FAIL: test_untagged_spool_fed_back_keeps_the_measured_factor (test_issue8.Issue8.test_untagged_spool_fed_back_keeps_the_measured_factor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue8.py", line 66, in test_untagged_spool_fed_back_keeps_the_measured_factor
+    self.assertEqual(k["after-feed"], (MEASURED, MEASURED), "live, store after the spool is fed back")
+AssertionError: Tuples differ: (0.023951, 0.02) != (0.023951, 0.023951)
+
+First differing element 1:
+0.02
+0.023951
+
+- (0.023951, 0.02)
++ (0.023951, 0.023951)
+?                ++++
+ : live, store after the spool is fed back
+
+----------------------------------------------------------------------
+Ran 3 tests in 28.729s
+
+FAILED (failures=3)

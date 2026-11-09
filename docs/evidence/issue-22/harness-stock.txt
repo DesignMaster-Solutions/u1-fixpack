@@ -1,15 +1,16 @@
-firmware: u1-klipper 93cb12f, FIXPACK_PATCHES=none
+firmware: u1-klipper 93cb12fa Release firmware version 2.0.0, FIXPACK_PATCHES=none
 expected: fail; unittest exit code: 1 (ok)
 
 test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move) ... FAIL
 test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put) ... FAIL
 test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print) ... FAIL
+test_tool_change_after_skip_primes_in_the_chute (test_issue22.Issue22.test_tool_change_after_skip_primes_in_the_chute) ... FAIL
 
 ======================================================================
 FAIL: test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/fixpack/tests/test_issue22.py", line 34, in test_end_of_print_park_then_e_only_move
+  File "/fixpack/tests/test_issue22.py", line 35, in test_end_of_print_park_then_e_only_move
     self.assertEqual(p.errors(), [])
 AssertionError: Lists differ: ['!! Move out of range on Y axis: 35.000 450.500 1.200 [54.288]'] != []
 
@@ -24,9 +25,9 @@ First extra element 0:
 FAIL: test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/fixpack/tests/test_issue22.py", line 43, in test_park_inside_skipped_object_then_partial_moves_stay_put
+  File "/fixpack/tests/test_issue22.py", line 44, in test_park_inside_skipped_object_then_partial_moves_stay_put
     self.assert_gcode_matches_head(after_park, "after the park")
-  File "/fixpack/tests/test_issue22.py", line 17, in assert_gcode_matches_head
+  File "/fixpack/tests/test_issue22.py", line 18, in assert_gcode_matches_head
     self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
 AssertionError: 33.0 != 45.0 within 0.001 delta (12.0 difference) : after the park: gcode X=33.000 but the head is at 45.000
 
@@ -34,7 +35,7 @@ AssertionError: 33.0 != 45.0 within 0.001 delta (12.0 difference) : after the pa
 FAIL: test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then_resume_continues_the_print)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/fixpack/tests/test_issue22.py", line 24, in test_pause_then_resume_continues_the_print
+  File "/fixpack/tests/test_issue22.py", line 25, in test_pause_then_resume_continues_the_print
     self.assertEqual(p.errors(), [])
 AssertionError: Lists differ: ['!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]'] != []
 
@@ -45,7 +46,17 @@ First extra element 0:
 - ['!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]']
 + []
 
+======================================================================
+FAIL: test_tool_change_after_skip_primes_in_the_chute (test_issue22.Issue22.test_tool_change_after_skip_primes_in_the_chute)
 ----------------------------------------------------------------------
-Ran 3 tests in 4.364s
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22.py", line 60, in test_tool_change_after_skip_primes_in_the_chute
+    self.assert_gcode_matches_head(in_chute, "tool change %d, in the chute" % n)
+  File "/fixpack/tests/test_issue22.py", line 18, in assert_gcode_matches_head
+    self.assertAlmostEqual(g, t, delta=TOL, msg="%s: gcode %s=%.3f but the head is at %.3f"
+AssertionError: 82.7 != 92.7 within 0.001 delta (10.0 difference) : tool change 5, in the chute: gcode X=82.700 but the head is at 92.700
 
-FAILED (failures=3)
+----------------------------------------------------------------------
+Ran 4 tests in 6.981s
+
+FAILED (failures=4)

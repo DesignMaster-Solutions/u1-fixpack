@@ -4,6 +4,7 @@ Each case prints a file through the firmware's own virtual_sdcard with the shipp
 and fluidd.cfg (INNER_PAUSE, INNER_RESUME, MOVE_TO_DISCARD_FILAMENT_POSITION as shipped), and
 asserts on what the firmware itself answers: its errors, its GET_POSITION, its print state.
 """
+import os
 import unittest
 
 from fixpack import Print
@@ -45,6 +46,24 @@ class Issue22(unittest.TestCase):
         for i, axis in enumerate("XY"):
             self.assertAlmostEqual(at_end["toolhead"][i], after_park["toolhead"][i], delta=TOL,
                                    msg="the head moved in %s on E/Z-only moves" % axis)
+        self.assertIn("FIXPACK: print ended, state complete", p.responses)
+        self.assertEqual(p.rc, 0)
+
+    def test_tool_change_after_skip_primes_in_the_chute(self):
+        # abehrman's report in the issue: no pause involved. The tool change and the chute park
+        # are manual moves; the E-only prime that follows must not carry the skipped-object XY.
+        p = Print("tests/issue22/tool_change.gcode", "issue22-tool-change")
+        self.assertEqual(p.errors(), [])
+        positions = p.positions()  # a pair per tool change: in the chute, then after the prime
+        self.assertEqual(len(positions), 14, "4 layers of A|C,B make 7 tool changes")
+        for n, (in_chute, after_prime) in enumerate(zip(positions[::2], positions[1::2]), 1):
+            self.assert_gcode_matches_head(in_chute, "tool change %d, in the chute" % n)
+            for i, axis in enumerate("XY"):
+                self.assertAlmostEqual(after_prime["toolhead"][i], in_chute["toolhead"][i], delta=TOL,
+                                       msg="tool change %d: the head moved in %s on the E-only prime"
+                                       % (n, axis))
+        with open(os.path.join(p.out, "trace.txt")) as f:
+            self.assertRegex(f.read(), r"(?m)^M .* extruder1 ", "T1 did not activate extruder1")
         self.assertIn("FIXPACK: print ended, state complete", p.responses)
         self.assertEqual(p.rc, 0)
 

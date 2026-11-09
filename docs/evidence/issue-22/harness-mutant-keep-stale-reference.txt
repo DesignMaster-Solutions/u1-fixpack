@@ -1,4 +1,4 @@
-firmware: u1-klipper 93cb12f, FIXPACK_PATCHES=tests/mutants/22-keep-stale-reference.patch
+firmware: u1-klipper 93cb12fa Release firmware version 2.0.0, FIXPACK_PATCHES=tests/mutants/22-keep-stale-reference.patch
 expected: fail; unittest exit code: 1 (ok)
 
 test_end_of_print_park_then_e_only_move (test_issue22.Issue22.test_end_of_print_park_then_e_only_move) ... Checking patch klippy/extras/exclude_object.py...
@@ -13,16 +13,20 @@ test_pause_then_resume_continues_the_print (test_issue22.Issue22.test_pause_then
 Hunk #3 succeeded at 213 (offset -1 lines).
 Applied patch klippy/extras/exclude_object.py cleanly.
 ok
+test_tool_change_after_skip_primes_in_the_chute (test_issue22.Issue22.test_tool_change_after_skip_primes_in_the_chute) ... Checking patch klippy/extras/exclude_object.py...
+Hunk #3 succeeded at 213 (offset -1 lines).
+Applied patch klippy/extras/exclude_object.py cleanly.
+ok
 
 ======================================================================
 FAIL: test_park_inside_skipped_object_then_partial_moves_stay_put (test_issue22.Issue22.test_park_inside_skipped_object_then_partial_moves_stay_put)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/fixpack/tests/test_issue22.py", line 46, in test_park_inside_skipped_object_then_partial_moves_stay_put
+  File "/fixpack/tests/test_issue22.py", line 47, in test_park_inside_skipped_object_then_partial_moves_stay_put
     self.assertAlmostEqual(at_end["toolhead"][i], after_park["toolhead"][i], delta=TOL,
 AssertionError: 127.0 != 45.0 within 0.001 delta (82.0 difference) : the head moved in X on E/Z-only moves
 
 ----------------------------------------------------------------------
-Ran 3 tests in 4.791s
+Ran 4 tests in 7.449s
 
 FAILED (failures=1)

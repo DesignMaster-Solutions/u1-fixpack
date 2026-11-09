@@ -1,0 +1,137 @@
+// Klipper state: Ready
+// Power loss module not detected, Power resume has been disabled
+File opened:print.gcode Size:8349
+File selected
+// Success: Changed main state to PRINTING
+// extruder -> extruder1
+// park extruder !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:124864 stepper_y:-65536 stepper_z:-327960
+// stepper: stepper_x:390.200000 stepper_y:-204.800000 stepper_z:1.700000
+// kinematic: X:92.700000 Y:297.500000 Z:1.700000
+// toolhead: X:92.700000 Y:300.500000 Z:1.700000 E:0.000000
+// gcode: X:92.700000 Y:300.500000 Z:1.700000 E:0.000000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:0.000000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125824 stepper_y:-66496 stepper_z:-327960
+// stepper: stepper_x:393.200000 stepper_y:-207.800000 stepper_z:1.700000
+// kinematic: X:92.700000 Y:300.500000 Z:1.700000
+// toolhead: X:92.700000 Y:300.500000 Z:1.700000 E:19.500000
+// gcode: X:92.700000 Y:300.500000 Z:1.700000 E:19.500000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:0.000000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// Excluding object B
+// extruder1 -> extruder
+// park extruder1 !!!
+// pick extruder !!!
+// Activating extruder extruder
+// mcu: stepper_x:109600 stepper_y:-80800 stepper_z:-327960
+// stepper: stepper_x:342.500000 stepper_y:-252.500000 stepper_z:1.700000
+// kinematic: X:45.000000 Y:297.500000 Z:1.700000
+// toolhead: X:45.000000 Y:300.500000 Z:1.700000 E:4.752000
+// gcode: X:45.000000 Y:300.500000 Z:1.700000 E:4.752000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:4.752000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:110560 stepper_y:-81760 stepper_z:-327960
+// stepper: stepper_x:345.500000 stepper_y:-255.500000 stepper_z:1.700000
+// kinematic: X:45.000000 Y:300.500000 Z:1.700000
+// toolhead: X:45.000000 Y:300.500000 Z:1.700000 E:24.252000
+// gcode: X:45.000000 Y:300.500000 Z:1.700000 E:24.252000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:4.752000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder -> extruder1
+// park extruder !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:124864 stepper_y:-65536 stepper_z:-327720
+// stepper: stepper_x:390.200000 stepper_y:-204.800000 stepper_z:1.900000
+// kinematic: X:92.700000 Y:297.500000 Z:1.900000
+// toolhead: X:92.700000 Y:300.500000 Z:1.900000 E:34.284000
+// gcode: X:92.700000 Y:300.500000 Z:1.900000 E:34.284000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:34.284000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125824 stepper_y:-66496 stepper_z:-327720
+// stepper: stepper_x:393.200000 stepper_y:-207.800000 stepper_z:1.900000
+// kinematic: X:92.700000 Y:300.500000 Z:1.900000
+// toolhead: X:92.700000 Y:300.500000 Z:1.900000 E:53.784000
+// gcode: X:92.700000 Y:300.500000 Z:1.900000 E:53.784000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:34.284000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder1 -> extruder
+// park extruder1 !!!
+// pick extruder !!!
+// Activating extruder extruder
+// mcu: stepper_x:109600 stepper_y:-80800 stepper_z:-327720
+// stepper: stepper_x:342.500000 stepper_y:-252.500000 stepper_z:1.900000
+// kinematic: X:45.000000 Y:297.500000 Z:1.900000
+// toolhead: X:45.000000 Y:300.500000 Z:1.900000 E:29.004000
+// gcode: X:45.000000 Y:300.500000 Z:1.900000 E:29.004000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:29.004000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:110560 stepper_y:-81760 stepper_z:-327720
+// stepper: stepper_x:345.500000 stepper_y:-255.500000 stepper_z:1.900000
+// kinematic: X:45.000000 Y:300.500000 Z:1.900000
+// toolhead: X:45.000000 Y:300.500000 Z:1.900000 E:48.504000
+// gcode: X:45.000000 Y:300.500000 Z:1.900000 E:48.504000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:29.004000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder -> extruder1
+// park extruder !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:124864 stepper_y:-65536 stepper_z:-327480
+// stepper: stepper_x:390.200000 stepper_y:-204.800000 stepper_z:2.100000
+// kinematic: X:92.700000 Y:297.500000 Z:2.100000
+// toolhead: X:92.700000 Y:300.500000 Z:2.100000 E:58.536000
+// gcode: X:92.700000 Y:300.500000 Z:2.100000 E:68.568000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:68.568000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125824 stepper_y:-66496 stepper_z:-327480
+// stepper: stepper_x:393.200000 stepper_y:-207.800000 stepper_z:2.100000
+// kinematic: X:92.700000 Y:300.500000 Z:2.100000
+// toolhead: X:92.700000 Y:300.500000 Z:2.100000 E:78.036000
+// gcode: X:92.700000 Y:300.500000 Z:2.100000 E:88.068000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:68.568000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder1 -> extruder
+// park extruder1 !!!
+// pick extruder !!!
+// Activating extruder extruder
+// mcu: stepper_x:109600 stepper_y:-80800 stepper_z:-327480
+// stepper: stepper_x:342.500000 stepper_y:-252.500000 stepper_z:2.100000
+// kinematic: X:45.000000 Y:297.500000 Z:2.100000
+// toolhead: X:45.000000 Y:300.500000 Z:2.100000 E:53.256000
+// gcode: X:45.000000 Y:300.500000 Z:2.100000 E:53.256000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:53.256000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:110560 stepper_y:-81760 stepper_z:-327480
+// stepper: stepper_x:345.500000 stepper_y:-255.500000 stepper_z:2.100000
+// kinematic: X:45.000000 Y:300.500000 Z:2.100000
+// toolhead: X:45.000000 Y:300.500000 Z:2.100000 E:72.756000
+// gcode: X:45.000000 Y:300.500000 Z:2.100000 E:72.756000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:53.256000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// extruder -> extruder1
+// park extruder !!!
+// pick extruder1 !!!
+// Activating extruder extruder1
+// mcu: stepper_x:124864 stepper_y:-65536 stepper_z:-327240
+// stepper: stepper_x:390.200000 stepper_y:-204.800000 stepper_z:2.300000
+// kinematic: X:92.700000 Y:297.500000 Z:2.300000
+// toolhead: X:92.700000 Y:300.500000 Z:2.300000 E:82.788000
+// gcode: X:92.700000 Y:300.500000 Z:2.300000 E:102.852000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:102.852000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+// mcu: stepper_x:125824 stepper_y:-66496 stepper_z:-327240
+// stepper: stepper_x:393.200000 stepper_y:-207.800000 stepper_z:2.300000
+// kinematic: X:92.700000 Y:300.500000 Z:2.300000
+// toolhead: X:92.700000 Y:300.500000 Z:2.300000 E:102.288000
+// gcode: X:92.700000 Y:300.500000 Z:2.300000 E:122.352000
+// gcode base: X:0.000000 Y:0.000000 Z:0.000000 E:102.852000
+// gcode homing: X:0.000000 Y:0.000000 Z:0.000000
+Done printing file
+// Power loss module not detected, Power resume has been disabled
+// Success: Exited to idle state
+FIXPACK: print ended, state complete
+// Klipper state: Disconnect

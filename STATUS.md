@@ -17,22 +17,36 @@
   file is printed through the firmware's own `virtual_sdcard`
   (`SDCARD_PRINT_FILE`), with the shipped `INNER_PAUSE`/`INNER_RESUME`; Pause and
   Resume are pressed through the firmware's own webhook handlers
-  (`harness/fixpack_ui.py`, what Moonraker calls). Three cases: Pause/Resume in
+  (`harness/fixpack_ui.py`, what Moonraker calls). Four cases: Pause/Resume in
   the skipped layers (the report), the end-of-print park + `G1 E30` (the
-  report's second failure), and a park while the object is still being skipped.
-  - Stock 93cb12f, red 3/3: `!! Resumes error!` then
+  report's second failure), a park while the object is still being skipped, and
+  a two-colour print with the U1 tool-change sequence after the skip
+  (`tests/issue22/tool_change.gcode`: T0 prints A, T1 prints C then B, B skipped
+  at layer 2; each swap is the U1 Orca profile's `change_filament_gcode` plus the
+  chute prime of `INNER_PREEXTRUDE_FILAMENT`). The fourth is abehrman's report of
+  8 November on the issue: two prints lost on a stock U1 (2.0.0.205) with no
+  pause involved, replayed offline to the exact bad targets.
+  - Stock 93cb12f, red 4/4: `!! Resumes error!` then
     `!! Move out of range on Y axis: 33.000 448.500 5.800 [42.288]`; after the
     park GET_POSITION says toolhead X45 Y300.5, gcode X33 Y448.5 (the issue's
-    numbers have the same shape: offset = skipped B minus last printed A).
-  - Patched, green 3/3: gcode equals toolhead after the park, Resume finishes the
-    file, print state `complete`.
-  - Mutants, red: Z offset kept (3/3 fail); old reference kept (1/3);
+    numbers have the same shape: offset = skipped B minus last printed A). In the
+    tool-change file, at the fifth swap (layer 3, back to T1) GET_POSITION in the
+    chute says toolhead X92.7 Y300.5, gcode X82.7 Y230.5 (the offset is kept per
+    extruder: T1's last moves before it was swapped away were the skipped B's, so
+    its offset is B's last point minus C's), and the E-only prime moves the head
+    to X82.7 Y230.5, 70 mm in Y across the bed while extruding, the shape of
+    abehrman's second print. Same numbers on 7ac453b (2.1.0).
+  - Patched, green 4/4: gcode equals toolhead after every park, Resume finishes
+    the file, all seven tool changes prime in the chute, print state `complete`.
+  - Mutants, red: Z offset kept (3/4 fail); old reference kept (1/4);
     the first #22 patch in this repo, commit `7a6cc7a`, which resets only while
     the offset is non-zero, so the later legs of the multi-leg park keep a stale
-    reference and an E-only move drags the head from Y300.5 to Y32 (1/3).
-    That is why the patch was replaced.
+    reference and an E-only move drags the head from Y300.5 to Y32 (1/4).
+    That is why the patch was replaced. None of the three breaks the tool-change
+    case; stock does.
   - Evidence: `docs/evidence/issue-22/harness-*.txt` (unittest output per
-    firmware variant, and the firmware console for stock and patched).
+    firmware variant, and the firmware console for stock and patched:
+    `harness-console-pause-resume-*.txt`, `harness-console-tool-change-*.txt`).
 - **CI:** green on commit `d590c9c` (run
   [41659167883](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41659167883)),
   with the full-print proof and both older runners.
