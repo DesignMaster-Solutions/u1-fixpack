@@ -62,7 +62,8 @@
   10.874; same Y, same stale offset -11.211/+37.135, X differs by his T1 chute
   X); 2026-11-01 has no error and at the 26th tool change the chute prime moves
   the head to X28.113 Y202.421 (his "about (28.1, 202.4)"). Patched: 143/143 and
-  61/61 tool changes keep gcode == toolhead, both prints end `complete`.
+  61/61 tool changes keep gcode == toolhead, both prints end `complete`. The
+  same four results on 7ac453b (2.1.0), files `real-print-*-2.1.0.txt`.
   Evidence: `docs/evidence/issue-22/real-print-{A,B}-{stock,patched}.txt`
   (`tests/issue22/replay_report.py` summary plus the full firmware console).
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
