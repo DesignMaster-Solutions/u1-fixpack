@@ -45,6 +45,8 @@ every mutant fails ([evidence](docs/evidence/2.1.0/)). CI runs every check on bo
 releases. This project adds the printer-free reproduction, the
 patch and the regression test.
 
+Releases: https://github.com/DesignMaster-Solutions/u1-fixpack/releases (zip with the three `.patch` files, `tools/fan_m400.py`, the tests and this documentation; on a `u1-klipper` checkout, `git apply patches/<file>.patch`). Project site: https://designmaster-solutions.github.io/u1-fixpack/.
+
 ## #18 on stock firmware, until the patch ships
 
 `tools/fan_m400.py` puts an `M400` before every part-fan `M106`/`M107` (fans with a `P` index,
