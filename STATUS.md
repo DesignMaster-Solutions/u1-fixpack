@@ -49,7 +49,10 @@
     `harness-console-pause-resume-*.txt`, `harness-console-tool-change-*.txt`).
 - **CI:** green on commit `d590c9c` (run
   [41659167883](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/41659167883)),
-  with the full-print proof and both older runners.
+  with the full-print proof and both older runners; green again with the fourth
+  case on `ba7d321` (run
+  [42543618847](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/42543618847),
+  2.0.0 and 2.1.0).
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
   `tests/fixtures/issue22.gcode`, `baseline/patched/mutant.txt`) still passes
   with the replaced patch.
