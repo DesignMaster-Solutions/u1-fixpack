@@ -52,7 +52,8 @@
   with the full-print proof and both older runners; green again with the fourth
   case on `ba7d321` (run
   [42543618847](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/42543618847),
-  2.0.0 and 2.1.0).
+  2.0.0 and 2.1.0); green with the real-print replay scripts on `f5d1308` (run
+  [42678275920](https://github.com/DesignMaster-Solutions/u1-fixpack/actions/runs/42678275920)).
 - **Real prints (09/11):** the two files abehrman lost on his stock U1 (2.0.0.205,
   gist 4fcabd84) replayed unmodified through the firmware with
   `tests/issue22/replay_real.py` (start block replaced, Skip injected at the
