@@ -1,0 +1,20 @@
+b.gcode: 777876 moves, 63 tool changes
+motion time 13769 s (no heating), about 262 s of it firmware tool-change motion
+  extruder: 0 mm of filament
+  extruder1: 20129 mm of filament
+  extruder3: 588 mm of filament
+what if: object K_rper_07__1_id_15_copy_0 skipped at line 195168; the file ran as a print
+what if: object K_rper_07__1_id_17_copy_0 skipped at line 195168; the file ran as a print
+what if: object K_rper_182_id_16_copy_0 skipped at line 195724; the file ran as a print
+SCAR line 207895 (gcode, extruder1): [101.52, 97.06] -> [53.42, 105.23] at Z4.65 crosses 7.0 mm of finished surface, clearance -0.03 mm
+SCAR line 215427 (gcode, extruder1): [59.91, 130.19] -> [38.71, 163.85] at Z4.85 crosses 20.0 mm of finished surface, clearance -0.17 mm
+SCAR line 315713 (gcode, extruder1): [59.79, 130.19] -> [35.81, 160.25] at Z7.65 crosses 15.5 mm of finished surface, clearance -0.19 mm
+SCAR line 322732 (gcode, extruder1): [101.53, 97.06] -> [50.79, 100.39] at Z7.85 crosses 8.5 mm of finished surface, clearance -0.04 mm
+SCAR line 392687 (gcode, extruder1): [101.52, 97.06] -> [36.33, 150.01] at Z10.25 crosses 13.0 mm of finished surface, clearance -0.08 mm
+SCAR line 401815 (gcode, extruder1): [196.7, 55.15] -> [174.05, 29.68] at Z10.65 crosses 20.0 mm of finished surface, clearance -0.17 mm
+SCAR line 421571 (gcode, extruder1): [101.52, 97.06] -> [35.32, 149.31] at Z11.25 crosses 9.0 mm of finished surface, clearance -0.07 mm
+SCAR line 507349 (gcode, extruder1): [197.1, 57.71] -> [174.16, 29.78] at Z15.05 crosses 24.0 mm of finished surface, clearance -0.20 mm
+DRAG line 295270 (extruder3): the file asks for filament only, the firmware moved the head 222.4 mm, [227.7, 300.5] -> [28.11, 202.42] at Z8.15, while pushing 10.0 mm of filament (skipped-object offset, Snapmaker/u1-klipper#22)
+not exercised (no such hardware here): TIMELAPSE_TAKE_FRAME, DEFECT_DETECTION_DETECT, SM_PRINT_END_AUTO_UNLOAD_FILAMENT, SET_PURIFIER_MODE, TIMELAPSE_STOP
+start block: line 437 (G0 X85 Y1 Z2 F18000) leaves 1.00 mm to the Y limit: a head with a Y offset below -1.00 mm is refused there if it starts the print (head offsets: Moonraker extruder_offset)
+rc=1

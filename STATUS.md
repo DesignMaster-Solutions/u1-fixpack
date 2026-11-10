@@ -67,6 +67,15 @@
   same four results on 7ac453b (2.1.0), files `real-print-*-2.1.0.txt`.
   Evidence: `docs/evidence/issue-22/real-print-{A,B}-{stock,patched}.txt`
   (`tests/issue22/replay_report.py` summary plus the full firmware console).
+- **What the patch does not cover (10/11):** the 2026-11-01 file with its three Skips,
+  run through [U1 Dry Run](https://github.com/DesignMaster-Solutions/u1-dryrun) on 2.1.0, stock and
+  with `0022` mounted over `exclude_object.py`. Stock: `DRAG line 295270` (222.4 mm) plus 8
+  travels that cross finished parts within 0.05 mm. Patched: the drag is gone, the same 8
+  travels remain. All 8 are the first `G1` after `EXCLUDE_OBJECT_END` of a skipped object:
+  the slicer's ramped lift (0.4 mm over about 8 mm from the skipped object's wipe) is stretched
+  from where the head really is (48 mm at line 207895). A separate behaviour of
+  `_move_from_excluded_region`, not fixed here; nobody has looked for the marks on a print.
+  Evidence: `docs/evidence/issue-22/dryrun-real-print-B-{stock,patched}-2.1.0.txt`.
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
   `tests/fixtures/issue22.gcode`, `baseline/patched/mutant.txt`) still passes
   with the replaced patch.
