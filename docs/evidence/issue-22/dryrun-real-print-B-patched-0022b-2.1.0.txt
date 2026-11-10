@@ -1,0 +1,12 @@
+b.gcode: 778012 moves, 63 tool changes
+motion time 13732 s (no heating), about 261 s of it firmware tool-change motion
+  extruder: 0 mm of filament
+  extruder1: 20129 mm of filament
+  extruder3: 588 mm of filament
+what if: object K_rper_07__1_id_15_copy_0 skipped at line 195168; the file ran as a print
+what if: object K_rper_07__1_id_17_copy_0 skipped at line 195168; the file ran as a print
+what if: object K_rper_182_id_16_copy_0 skipped at line 195724; the file ran as a print
+not exercised (no such hardware here): TIMELAPSE_TAKE_FRAME, DEFECT_DETECTION_DETECT, SM_PRINT_END_AUTO_UNLOAD_FILAMENT, SET_PURIFIER_MODE, TIMELAPSE_STOP
+start block: line 437 (G0 X85 Y1 Z2 F18000) leaves 1.00 mm to the Y limit: a head with a Y offset below -1.00 mm is refused there if it starts the print (head offsets: Moonraker extruder_offset)
+clean: firmware accepted every command, no travel across a finished surface
+rc=0

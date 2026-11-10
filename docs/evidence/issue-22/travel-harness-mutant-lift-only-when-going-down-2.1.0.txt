@@ -1,0 +1,28 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/22travel-lift-only-when-going-down.patch
+expected: fail; unittest exit code: 1 (ok)
+
+test_first_travel_after_skip_lifts_where_the_head_is (test_issue22travel.Issue22Travel.test_first_travel_after_skip_lifts_where_the_head_is) ... Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+FAIL
+
+======================================================================
+FAIL: test_first_travel_after_skip_lifts_where_the_head_is (test_issue22travel.Issue22Travel.test_first_travel_after_skip_lifts_where_the_head_is)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22travel.py", line 33, in test_first_travel_after_skip_lifts_where_the_head_is
+    self.assertEqual(ramps, [], "a lift was stretched over a travel longer than the slicer's %g mm ramp" % RAMP_MM)
+AssertionError: Lists differ: [((127.0, 32.0, 0.4), (125.0, 182.0, 0.8))[82 chars].2))] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+((127.0, 32.0, 0.4), (125.0, 182.0, 0.8))
+
++ []
+- [((127.0, 32.0, 0.4), (125.0, 182.0, 0.8)),
+-  ((127.0, 32.0, 0.6), (125.0, 182.0, 1.0)),
+-  ((127.0, 32.0, 0.8), (125.0, 182.0, 1.2))] : a lift was stretched over a travel longer than the slicer's 8 mm ramp
+
+----------------------------------------------------------------------
+Ran 1 test in 1.538s
+
+FAILED (failures=1)

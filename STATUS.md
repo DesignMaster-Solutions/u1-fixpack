@@ -74,8 +74,21 @@
   travels remain. All 8 are the first `G1` after `EXCLUDE_OBJECT_END` of a skipped object:
   the slicer's ramped lift (0.4 mm over about 8 mm from the skipped object's wipe) is stretched
   from where the head really is (48 mm at line 207895). A separate behaviour of
-  `_move_from_excluded_region`, not fixed here; nobody has looked for the marks on a print.
+  `_move_from_excluded_region`, not fixed by `0022` (see the next item); nobody has looked for
+  the marks on a print.
   Evidence: `docs/evidence/issue-22/dryrun-real-print-B-{stock,patched}-2.1.0.txt`.
+- **Second patch for those travels (10/11):** `patches/0022b-exclude-object-lift-before-travel.patch`,
+  on top of `0022`. When the first move after a skipped object goes up, `_normal_move()` makes
+  the Z part where the head is and then the XY part. Test `tests/test_issue22travel.py`
+  (`tests/issue22/travel_after_skip.gcode`: A, B, C per layer, B skipped, 8 mm ramped lifts as
+  OrcaSlicer writes them): stock and `0022` alone red (lifts of 0.4 mm stretched over 150 mm
+  from A's last point), with `0022b` green, mutant that lifts first only on the way down red;
+  same on 93cb12f and 7ac453b, and the four `test_issue22` cases and their mutants are
+  unchanged (`tests/prove.sh`). The 2026-11-01 file through U1 Dry Run on 2.1.0 with both
+  patches mounted: no `DRAG`, no scar, `clean`, 135 more moves than stock (the lifts), the
+  same filament per head. Evidence: `docs/evidence/issue-22/travel-harness-*.txt` and
+  `dryrun-real-print-B-patched-0022b-2.1.0.txt`. Limits: a travel that the slicer itself
+  planned without a lift is left as it is; offline only, nobody has printed with it.
 - **Narrower proof kept:** `tests/run_issue22.py` (fixture
   `tests/fixtures/issue22.gcode`, `baseline/patched/mutant.txt`) still passes
   with the replaced patch.

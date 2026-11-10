@@ -74,6 +74,25 @@ def body_tool_change():
     return lines
 
 
+def body_travel():
+    """A, B, C on every layer, B skipped at layer 2. As in OrcaSlicer output, each object opens
+    with the lift from the previous object's last point (0.4 mm of Z over 8 mm of XY) and then
+    travels at that height. After the skip the head is at A, not at B, when C's lift comes."""
+    lines = ["EXCLUDE_OBJECT_DEFINE NAME=C CENTER=135,120 POLYGON=[[125,110],[145,110],[145,130],[125,130],[125,110]]"]
+    last = None  # the previous object's last point in the file
+    for n, z in enumerate((0.2, 0.4, 0.6, 0.8), 1):
+        lines += [";LAYER_CHANGE", ";Z:%.1f" % z, "G92 E0"]
+        if n == 2:
+            lines.append("EXCLUDE_OBJECT NAME=B ; the user skips B")
+        for name, cx, cy, half in (("A", 135, 40, 10), ("B", 135, 200, 20), ("C", 135, 120, 10)):
+            b = block(name, cx, cy, half, z)
+            if last:
+                b.insert(1, "G1 X%.3f Y%.3f Z%.3f F30000 ; slicer's ramped lift" % (last[0] + 8, last[1], z + 0.4))
+            lines += b
+            last = (cx - half + 2, cy - half + 2)
+    return lines
+
+
 FILES = {
     # The issue's main report: Pause on the screen during B's skipped layers, then Resume.
     "pause_resume.gcode": (
@@ -97,6 +116,11 @@ FILES = {
     "tool_change.gcode": (
         "Two-colour print, B skipped; each swap back to T1 primes in the chute (abehrman's report).",
         body_tool_change() + ["M104 S0 T0", "M104 S0 T1", "M140 S0"]),
+    # Not in the issue: found with U1 Dry Run on abehrman's 2026-11-01 file. The first move after a
+    # skipped object is the slicer's ramped lift, made from where the head really is.
+    "travel_after_skip.gcode": (
+        "A, B, C per layer, B skipped: the lift before the travel from A to C (found with U1 Dry Run).",
+        body_travel() + ["GET_POSITION", "M104 S0", "M140 S0"]),
 }
 
 if __name__ == "__main__":
