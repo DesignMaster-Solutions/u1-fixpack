@@ -25,12 +25,14 @@ class Issue22Travel(unittest.TestCase):
             for l in f:
                 c = l.split()
                 if c[0] == "M" and c[-1] == "G":
-                    moves.append((float(c[1]), float(c[2]), float(c[3])))
+                    moves.append((float(c[1]), float(c[2]), float(c[3]), float(c[4])))
         ramps = [(a, b) for a, b in zip(moves, moves[1:])
                  if b[2] > a[2]
                  and math.hypot(b[0] - a[0], b[1] - a[1]) > RAMP_MM + 0.01]
         self.assertGreater(len(moves), 100, "the trace is too short to be the whole print")
         self.assertEqual(ramps, [], "a lift was stretched over a travel longer than the slicer's %g mm ramp" % RAMP_MM)
+        lifts_with_e = [(a, b) for a, b in zip(moves, moves[1:]) if a[:2] == b[:2] and b[2] > a[2] and b[3] != a[3]]
+        self.assertEqual(lifts_with_e, [], "the added lift moved E: the E of the travel must stay with the travel")
         end = p.positions()[-1]
         for axis, t, g in zip("XYZ", end["toolhead"], end["gcode"]):
             self.assertAlmostEqual(g, t, delta=0.001, msg="at the end: gcode %s=%.3f, head %.3f" % (axis, g, t))

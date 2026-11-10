@@ -82,7 +82,9 @@
   the Z part where the head is and then the XY part. Test `tests/test_issue22travel.py`
   (`tests/issue22/travel_after_skip.gcode`: A, B, C per layer, B skipped, 8 mm ramped lifts as
   OrcaSlicer writes them): stock and `0022` alone red (lifts of 0.4 mm stretched over 150 mm
-  from A's last point), with `0022b` green, mutant that lifts first only on the way down red;
+  from A's last point), with `0022b` green, two mutants red (lifts first only on the way down; the added lift also
+  carries the E of the travel). The added lift is Z only: any E in that move stays with the
+  travel, as on stock, because a Z+E move is checked as extrude-only (`max_extrude_only_distance`);
   same on 93cb12f and 7ac453b, and the four `test_issue22` cases and their mutants are
   unchanged (`tests/prove.sh`). The 2026-11-01 file through U1 Dry Run on 2.1.0 with both
   patches mounted: no `DRAG`, no scar, `clean`, 135 more moves than stock (the lifts), the

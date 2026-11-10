@@ -87,7 +87,7 @@ def body_travel():
         for name, cx, cy, half in (("A", 135, 40, 10), ("B", 135, 200, 20), ("C", 135, 120, 10)):
             b = block(name, cx, cy, half, z)
             if last:
-                b.insert(1, "G1 X%.3f Y%.3f Z%.3f F30000 ; slicer's ramped lift" % (last[0] + 8, last[1], z + 0.4))
+                b.insert(1, "G1 X%.3f Y%.3f Z%.3f E-.2 F30000 ; slicer's ramped lift, retracting" % (last[0] + 8, last[1], z + 0.4))
             lines += b
             last = (cx - half + 2, cy - half + 2)
     return lines

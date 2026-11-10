@@ -18,7 +18,8 @@ three objects skipped) run offline: 8 such travels cross finished parts with
 less than 0.05 mm of clearance, with and without 0022.
 
 _normal_move() now makes the Z part of that first move where the head is, then
-the XY part. Nothing changes when the first move after the skip does not go
+the XY part. Any E in that move stays with the XY part, as before: a Z+E move
+would be checked as an extrude-only move (max_extrude_only_distance). Nothing changes when the first move after the skip does not go
 up, or when no object is skipped.
 
 Regression test: tests/test_issue22travel.py in
@@ -43,7 +44,7 @@ alone, green with this patch).
  
          if offset[2] != 0 and newpos[2] != self.last_position_excluded[2]:
              offset[2] = 0
-@@ -213,6 +215,13 @@
+@@ -213,6 +215,14 @@
          tx_pos = newpos[:]
          for i in range(4):
              tx_pos[i] = newpos[i] - offset[i]
@@ -53,7 +54,8 @@ alone, green with this patch).
 +            # point; the head is at the last printed one. Lift there first, so
 +            # the travel does not ramp up across finished parts.
 +            self.next_transform.move(
-+                self.last_tx_position[:2] + tx_pos[2:], speed)
++                self.last_tx_position[:2] + [tx_pos[2],
++                self.next_transform.get_position()[3]], speed)
          self.next_transform.move(tx_pos, speed)
          self.last_tx_position = tx_pos[:3]
  
