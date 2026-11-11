@@ -19,10 +19,10 @@ Snapmaker's own firmware code (`Snapmaker/u1-klipper`, 2.0.0 and 2.1.0) with no 
 
 | What U1 owners see | Patch | Proof on the real firmware |
 |---|---|---|
-| Skip an object, then pause or change tool: Resume stops with "Move out of range", or the prime in the chute drags the head across the bed ([#22](https://github.com/Snapmaker/u1-klipper/issues/22)) | `0022-exclude-object-manual-move.patch` | Two prints a U1 owner lost on stock 2.0.0.205, replayed unmodified: stock reproduces both faults, patched prints both to the end ([evidence](evidence/issue-22/)) |
+| Skip an object, then pause or change tool: Resume stops with "Move out of range", or the prime in the chute drags the head across the bed ([#22](https://github.com/Snapmaker/u1-klipper/issues/22)) | `0022-exclude-object-manual-move.patch` | Two prints a U1 owner lost on stock 2.0.0.205, replayed unmodified: stock reproduces both faults, patched prints both to the end ([evidence](https://github.com/DesignMaster-Solutions/u1-fixpack/tree/main/docs/evidence/issue-22)) |
 | After a skipped object the nozzle travels over finished parts almost at print height | `0022b-exclude-object-lift-before-travel.patch` | 8 such travels on the owner's file, 0 with the patch ([evidence](evidence/issue-22/dryrun-real-print-B-patched-0022b-2.1.0.txt)); offline only, not printed |
-| Part cooling fan switches 2 to 4 s before the toolhead reaches the M106/M107 ([#18](https://github.com/Snapmaker/u1-klipper/issues/18)) | `0018-fan-gcode-motion-sync.patch` | 4366 ms early on stock, 10 ms after the step with the patch ([evidence](evidence/issue-18/)) |
-| Runout and resume replace the head's measured flow calibration with the default ([#8](https://github.com/Snapmaker/u1-klipper/issues/8)) | `0008-runout-resume-keeps-flow-k.patch` | 0.023951 becomes 0.020000 on stock, kept with the patch ([evidence](evidence/issue-8/)) |
+| Part cooling fan switches 2 to 4 s before the toolhead reaches the M106/M107 ([#18](https://github.com/Snapmaker/u1-klipper/issues/18)) | `0018-fan-gcode-motion-sync.patch` | 4366 ms early on stock, 10 ms after the step with the patch ([evidence](https://github.com/DesignMaster-Solutions/u1-fixpack/tree/main/docs/evidence/issue-18)) |
+| Runout and resume replace the head's measured flow calibration with the default ([#8](https://github.com/Snapmaker/u1-klipper/issues/8)) | `0008-runout-resume-keeps-flow-k.patch` | 0.023951 becomes 0.020000 on stock, kept with the patch ([evidence](https://github.com/DesignMaster-Solutions/u1-fixpack/tree/main/docs/evidence/issue-8)) |
 
 Every patch has a test that fails on the shipped firmware, passes with the patch, and fails again
 on each deliberately wrong version of the patch. CI runs all of it on 2.0.0 and 2.1.0.
