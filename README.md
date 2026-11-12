@@ -106,6 +106,16 @@ below -1.0 are the ones that failed, and head 2 never did. The profile change is
 [Snapmaker/snapmaker-profiles#5](https://github.com/Snapmaker/snapmaker-profiles/pull/5) (the line at Y5 in
 the four U1 nozzle profiles, for [Snapmaker/OrcaSlicer#1143](https://github.com/Snapmaker/OrcaSlicer/issues/1143)).
 
+## Read from the source, no patch
+
+Two open firmware issues had no answer and can be settled by reading the code. No patch is offered for
+them; each note says what the firmware does, where, and what is still unknown.
+
+| Issue | What the source says |
+|---|---|
+| [u1-klipper#14](https://github.com/Snapmaker/u1-klipper/issues/14) | PCTG calibrates flow at 220 C because PCTG is in none of the filament tables and the print file's temperature is dropped when any other file parameter fails one combined check. [Note](docs/upstream/issue-14-pctg-flow-temp-20261112.md). Waiting for the reporter's klippy.log before writing a patch. |
+| [u1-klipper#15](https://github.com/Snapmaker/u1-klipper/issues/15) | The PSU fan table's columns 3 and 4 are numbers of heads, not speeds. Stock asks for 60 % while a head is set above 45 and 100 % only with three heads on and one above 260; both tables proposed in the issue never reach their second row. [Note](docs/upstream/issue-15-power-fan-table-20261112.md), pinned by `tests/test_power_fan_table.py` on the firmware's own `heater_fan.py` (1.6.0, 2.0.0, 2.1.0). |
+
 ## On the Extended firmware
 
 The community [Extended firmware](https://github.com/paxx12-snapmaker-u1/SnapmakerU1-Extended-Firmware)

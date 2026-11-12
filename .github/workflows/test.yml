@@ -13,6 +13,8 @@ jobs:
         run: python3 -m unittest tests.test_fan_m400
       - name: Build the U1 firmware runner at ${{ matrix.ref }}
         run: docker build --build-arg U1_KLIPPER_REF=${{ matrix.ref }} -t u1-fixpack:local .
+      - name: PSU fan table as the firmware reads it (u1-klipper#15)
+        run: docker run --rm -v "$PWD:/fixpack" -w /fixpack --entrypoint python3 u1-fixpack:local -m unittest -v tests.test_power_fan_table
       - name: Run issue regressions
         env:
           FIXPACK_FIRMWARE: ${{ matrix.ref }}
