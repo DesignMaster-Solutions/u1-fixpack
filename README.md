@@ -106,6 +106,27 @@ below -1.0 are the ones that failed, and head 2 never did. The profile change is
 [Snapmaker/snapmaker-profiles#5](https://github.com/Snapmaker/snapmaker-profiles/pull/5) (the line at Y5 in
 the four U1 nozzle profiles, for [Snapmaker/OrcaSlicer#1143](https://github.com/Snapmaker/OrcaSlicer/issues/1143)).
 
+## A saved preset that only works in one project (OrcaSlicer#1207)
+
+Snapmaker Orca 2.4.1 saves a user preset as the keys that differ from its parent plus
+`"inherits": "<parent>"`. When the parent is a "Project-inside preset", it only exists inside that
+`.3mf`, so the saved file is skipped in every other project (`import_json_presets`: "can not find
+inherit preset for user preset"). `tools/flatten_preset.py` reads the parent chain from the `.3mf`
+and writes one preset with every key and no parent:
+
+```
+python3 tools/flatten_preset.py project.3mf                       # lists the presets inside
+python3 tools/flatten_preset.py project.3mf saved_preset.json     # the partial file from AppData
+```
+
+Then File > Import > Import Configs. `compatible_printers` is set to the project's printer, because
+a converted parent often still lists the printers it came from and would be hidden on the U1
+(`--printer` changes it). Checked on the project attached to the issue: 7 keys in, 335 out, and the
+2.4.1 command line slices with it (0.24 mm, 10% infill, 1 wall from the parent; no brim, no tower
+from the child). Not checked: the import dialog itself, and Windows. For the command line the file
+also needs `"type": "process"`, and that project's `wipe_tower_filament = 0` had to be removed
+(the 2.4.1 CLI exits 139 with it; the desktop app opens the same project fine).
+
 ## Read from the source, no patch
 
 Two open firmware issues had no answer and can be settled by reading the code. No patch is offered for
