@@ -1,0 +1,56 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=none
+
+test_a_real_mismatch_on_a_later_tool_is_still_refused (test_issue30.Issue30.test_a_real_mismatch_on_a_later_tool_is_still_refused) ... ok
+test_a_remap_onto_a_head_of_another_size_is_refused (test_issue30.Issue30.test_a_remap_onto_a_head_of_another_size_is_refused) ... FAIL
+test_mixed_heads_matching_the_file_print (test_issue30.Issue30.test_mixed_heads_matching_the_file_print) ... FAIL
+test_remapped_tools_are_checked_on_the_head_they_print_with (test_issue30.Issue30.test_remapped_tools_are_checked_on_the_head_they_print_with) ... FAIL
+test_single_value_file_still_covers_every_used_tool (test_issue30.Issue30.test_single_value_file_still_covers_every_used_tool) ... ok
+test_uniform_heads_print_as_before (test_issue30.Issue30.test_uniform_heads_print_as_before) ... ok
+
+======================================================================
+FAIL: test_a_remap_onto_a_head_of_another_size_is_refused (test_issue30.Issue30.test_a_remap_onto_a_head_of_another_size_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue30.py", line 59, in test_a_remap_onto_a_head_of_another_size_is_refused
+    self.assert_refused(start("issue30-remap-mismatch", [0.4, 0.4, 0.4, 0.8], [0.4, 0.4, 0.4, 0.4], {0, 1},
+  File "/fixpack/tests/test_issue30.py", line 41, in assert_refused
+    self.assertIn("nozzle diameter mismatch:" + pair, p.responses)
+AssertionError: 'nozzle diameter mismatch:f1_0.4 != e3_0.8' not found in '// Klipper state: Ready\n!! [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8\nFIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8\n// Klipper state: Disconnect\n'
+
+======================================================================
+FAIL: test_mixed_heads_matching_the_file_print (test_issue30.Issue30.test_mixed_heads_matching_the_file_print)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue30.py", line 46, in test_mixed_heads_matching_the_file_print
+    self.assert_printed(start("issue30-mixed", [0.4, 0.4, 0.4, 0.8], [0.4, 0.4, 0.4, 0.8], {0, 3}))
+  File "/fixpack/tests/test_issue30.py", line 35, in assert_printed
+    self.assertNotIn("start refused", p.responses)
+AssertionError: 'start refused' unexpectedly found in '// Klipper state: Ready\n!! [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8\nFIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8\n// Klipper state: Disconnect\n'
+
+======================================================================
+FAIL: test_remapped_tools_are_checked_on_the_head_they_print_with (test_issue30.Issue30.test_remapped_tools_are_checked_on_the_head_they_print_with)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue30.py", line 50, in test_remapped_tools_are_checked_on_the_head_they_print_with
+    self.assert_printed(start("issue30-remap", [0.4, 0.4, 0.4, 0.8], [0.8, 0.4, 0.4, 0.4], {0, 1},
+  File "/fixpack/tests/test_issue30.py", line 35, in assert_printed
+    self.assertNotIn("start refused", p.responses)
+AssertionError: 'start refused' unexpectedly found in '// Klipper state: Ready\n!! [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4\nFIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4\n// Klipper state: Disconnect\n'
+
+----------------------------------------------------------------------
+Ran 6 tests in 9.131s
+
+FAILED (failures=3)
+unittest exit code: 1
+
+--- firmware console, issue30-mixed
+// Klipper state: Ready
+!! [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8
+FIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f3_0.4 != e3_0.8
+// Klipper state: Disconnect
+
+--- firmware console, issue30-remap
+// Klipper state: Ready
+!! [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4
+FIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4
+// Klipper state: Disconnect

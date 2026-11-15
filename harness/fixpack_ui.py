@@ -49,7 +49,18 @@ class FixpackUI:
         self.reactor.register_timer(self._watch, self.reactor.NOW)
 
     def _start(self):
-        self.gcode.run_script("G28\nSDCARD_PRINT_FILE FILENAME=%s" % os.environ.get("FIXPACK_PRINT", "print.gcode"))
+        name = os.environ.get("FIXPACK_PRINT", "print.gcode")
+        params = os.environ.get("FIXPACK_START_PARAMS")
+        if not params:
+            self.gcode.run_script("G28\nSDCARD_PRINT_FILE FILENAME=%s" % name)
+            return
+        # Moonraker's start_print_advanced: the file's metadata rides on the start command, and the
+        # firmware may refuse the job there, before the first line of the file.
+        try:
+            self.gcode.run_script("G28\nSDCARD_PRINT_FILE_WITH_PARAMETERS FILENAME=\"%s\" %s" % (name, params))
+        except Exception as e:
+            self.out.write("FIXPACK: start refused: %s\n" % (e,))
+            self.printer.request_exit("exit")
 
     def cmd_FIXPACK_UI_PAUSE(self, gcmd):
         self.out.write("FIXPACK: user presses Pause\n")

@@ -1,0 +1,48 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/30-read-by-head.patch
+
+test_a_real_mismatch_on_a_later_tool_is_still_refused (test_issue30.Issue30.test_a_real_mismatch_on_a_later_tool_is_still_refused) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_a_remap_onto_a_head_of_another_size_is_refused (test_issue30.Issue30.test_a_remap_onto_a_head_of_another_size_is_refused) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+FAIL
+test_mixed_heads_matching_the_file_print (test_issue30.Issue30.test_mixed_heads_matching_the_file_print) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_remapped_tools_are_checked_on_the_head_they_print_with (test_issue30.Issue30.test_remapped_tools_are_checked_on_the_head_they_print_with) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+FAIL
+test_single_value_file_still_covers_every_used_tool (test_issue30.Issue30.test_single_value_file_still_covers_every_used_tool) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_uniform_heads_print_as_before (test_issue30.Issue30.test_uniform_heads_print_as_before) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+
+======================================================================
+FAIL: test_a_remap_onto_a_head_of_another_size_is_refused (test_issue30.Issue30.test_a_remap_onto_a_head_of_another_size_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue30.py", line 59, in test_a_remap_onto_a_head_of_another_size_is_refused
+    self.assert_refused(start("issue30-remap-mismatch", [0.4, 0.4, 0.4, 0.8], [0.4, 0.4, 0.4, 0.4], {0, 1},
+  File "/fixpack/tests/test_issue30.py", line 40, in assert_refused
+    self.assertIn("start refused", p.responses)
+AssertionError: 'start refused' not found in '// Klipper state: Ready\n// Power loss module not detected, Power resume has been disabled\nFile opened:print.gcode Size:327\nFile selected\n// Success: Changed main state to PRINTING\n// FIXPACK: flow_k file-ran extruder live=0.020000 store=0.020000\nDone printing file\n// Power loss module not detected, Power resume has been disabled\n// Success: Exited to idle state\nFIXPACK: print ended, state complete\n// Klipper state: Disconnect\n'
+
+======================================================================
+FAIL: test_remapped_tools_are_checked_on_the_head_they_print_with (test_issue30.Issue30.test_remapped_tools_are_checked_on_the_head_they_print_with)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue30.py", line 50, in test_remapped_tools_are_checked_on_the_head_they_print_with
+    self.assert_printed(start("issue30-remap", [0.4, 0.4, 0.4, 0.8], [0.8, 0.4, 0.4, 0.4], {0, 1},
+  File "/fixpack/tests/test_issue30.py", line 35, in assert_printed
+    self.assertNotIn("start refused", p.responses)
+AssertionError: 'start refused' unexpectedly found in '// Klipper state: Ready\n!! [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4\nFIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f0_0.8 != e0_0.4\n// Klipper state: Disconnect\n'
+
+----------------------------------------------------------------------
+Ran 6 tests in 9.516s
+
+FAILED (failures=2)
+unittest exit code: 1

@@ -218,6 +218,25 @@
   [Snapmaker/u1-klipper#27](https://github.com/Snapmaker/u1-klipper/pull/27) from
   `DesignMaster-Solutions:fix-8-runout-keeps-flow-k`.
 
+## M4: Snapmaker/u1-klipper#30
+
+- **Root cause (reported by 070freebird070-ctrl from the source, not run):** the start-of-print
+  nozzle check in `print_task_config.py` compares every used head with `nozzle_diameter[0]`.
+- **Reproduced on 7ac453b (2.1.0):** heads 0.4/0.4/0.4/0.8, file list the same, tools 0 and 3 used,
+  started with `SDCARD_PRINT_FILE_WITH_PARAMETERS` as Moonraker does: refused with
+  `nozzle diameter mismatch:f3_0.4 != e3_0.8` (the 0.4 is entry 0).
+- **Patch:** `patches/0030-nozzle-diameter-per-tool.patch` (+13/-6). Each used file tool against its
+  own entry, on the head `extruder_map_table` gives. A tool without an entry keeps the first entry
+  (today's behaviour), so no file that starts today is refused. The issue suggests
+  refusing a missing entry instead; left as a question on the PR.
+- **Proof:** `tests/test_issue30.py`, 6 tests: stock 3 red, patched 6 green, mutants red
+  (`30-read-by-head`, `30-no-single-value-fallback`, `30-still-first-entry`). Applies to 93cb12f too
+  (CI runs both). Evidence in `docs/evidence/2.1.0/issue-30/`.
+- **Harness:** `FIXPACK_START_PARAMS` makes `fixpack_ui` start the job with the metadata on the
+  start command; saved state may now name files under `persistent/` (the per-head nozzle configs).
+- **Limits:** batch mode, no printer with mixed nozzles; Moonraker's footer parsing and
+  auto-replenish not exercised. Upstream draft PR Snapmaker/u1-klipper#31.
+
 ## Remaining
 
 - Physical U1 validation remains to be done before offering the patches upstream.

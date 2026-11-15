@@ -50,7 +50,9 @@ def prepare_cfg(klipper, out, snapmaker=None):
             "mesh_x_pps": 2, "mesh_y_pps": 2, "algo": "bicubic", "tension": 0.2}}}, f)
     # Saved state the printer boots with (e.g. a measured flow factor): {file name: JSON object}
     for name, content in (snapmaker or {}).items():
-        with open(os.path.join(cfg, "snapmaker", name), "w") as f:
+        path = os.path.join(cfg, "snapmaker", name)  # "../persistent/x.json" reaches the nozzle configs
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
             json.dump(content, f)
     return os.path.join(cfg, "printer.cfg")
 
