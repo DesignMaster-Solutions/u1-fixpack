@@ -1,0 +1,28 @@
+firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/22travel-lift-carries-e.patch
+expected: fail; unittest exit code: 1 (ok)
+
+test_first_travel_after_skip_lifts_where_the_head_is (test_issue22travel.Issue22Travel.test_first_travel_after_skip_lifts_where_the_head_is) ... Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+FAIL
+
+======================================================================
+FAIL: test_first_travel_after_skip_lifts_where_the_head_is (test_issue22travel.Issue22Travel.test_first_travel_after_skip_lifts_where_the_head_is)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue22travel.py", line 35, in test_first_travel_after_skip_lifts_where_the_head_is
+    self.assertEqual(lifts_with_e, [], "the added lift moved E: the E of the travel must stay with the travel")
+AssertionError: Lists differ: [((127.0, 32.0, 0.4, 23.688), (127.0, 32.0[127 chars]96))] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+((127.0, 32.0, 0.4, 23.688), (127.0, 32.0, 0.8, 23.488))
+
++ []
+- [((127.0, 32.0, 0.4, 23.688), (127.0, 32.0, 0.8, 23.488)),
+-  ((127.0, 32.0, 0.6, 32.792), (127.0, 32.0, 1.0, 32.592)),
+-  ((127.0, 32.0, 0.8, 41.896), (127.0, 32.0, 1.2, 41.696))] : the added lift moved E: the E of the travel must stay with the travel
+
+----------------------------------------------------------------------
+Ran 1 test in 2.473s
+
+FAILED (failures=1)

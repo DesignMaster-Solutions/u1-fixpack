@@ -1,9 +1,13 @@
 firmware: u1-klipper 7ac453b5 Release firmware version 2.1.0, FIXPACK_PATCHES=tests/mutants/30-no-single-value-fallback.patch
+expected: fail; unittest exit code: 1 (ok)
 
 test_a_real_mismatch_on_a_later_tool_is_still_refused (test_issue30.Issue30.test_a_real_mismatch_on_a_later_tool_is_still_refused) ... Checking patch klippy/extras/print_task_config.py...
 Applied patch klippy/extras/print_task_config.py cleanly.
 ok
 test_a_remap_onto_a_head_of_another_size_is_refused (test_issue30.Issue30.test_a_remap_onto_a_head_of_another_size_is_refused) ... Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+ok
+test_a_tool_at_the_usage_threshold_is_unused_as_in_the_rest_of_the_start (test_issue30.Issue30.test_a_tool_at_the_usage_threshold_is_unused_as_in_the_rest_of_the_start) ... Checking patch klippy/extras/print_task_config.py...
 Applied patch klippy/extras/print_task_config.py cleanly.
 ok
 test_mixed_heads_matching_the_file_print (test_issue30.Issue30.test_mixed_heads_matching_the_file_print) ... Checking patch klippy/extras/print_task_config.py...
@@ -27,10 +31,13 @@ Traceback (most recent call last):
     self.assert_printed(start("issue30-single", [0.4, 0.4, 0.4, 0.4], [0.4], {0, 1}))
   File "/fixpack/tests/test_issue30.py", line 35, in assert_printed
     self.assertNotIn("start refused", p.responses)
-AssertionError: 'start refused' unexpectedly found in '// Klipper state: Ready\n!! [print_task_config] nozzle diameter mismatch:f1_0 != e1_0.4\nFIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f1_0 != e1_0.4\n// Klipper state: Disconnect\n'
+AssertionError: 'start refused' unexpectedly found in '// Klipper state: Ready
+!! [print_task_config] nozzle diameter mismatch:f1_0 != e1_0.4
+FIXPACK: start refused: [print_task_config] nozzle diameter mismatch:f1_0 != e1_0.4
+// Klipper state: Disconnect
+'
 
 ----------------------------------------------------------------------
-Ran 6 tests in 8.144s
+Ran 7 tests in 18.391s
 
 FAILED (failures=1)
-unittest exit code: 1

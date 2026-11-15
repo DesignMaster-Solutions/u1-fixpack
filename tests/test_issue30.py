@@ -15,11 +15,11 @@ from fixpack import Print
 GCODE = "tests/issue30/two_heads.gcode"
 
 
-def start(name, heads, file_nozzles, used, map_table=None):
+def start(name, heads, file_nozzles, used, map_table=None, grams=None):
     """heads: nozzle size per physical head; file_nozzles: the file's list; used: file tools that extrude."""
     state = {"../persistent/extruder%s_nozzle_config.json" % (i or ""):
              {"diameter": d, "diameter_v160": d, "volume_type": "standard"} for i, d in enumerate(heads)}
-    grams = [1.5 if i in used else 0.0 for i in range(max(used) + 1)]
+    grams = grams or [1.5 if i in used else 0.0 for i in range(max(used) + 1)]
     params = 'NOZZLE_DIAMETER_LIST="%s" FILAMENT_USED_G="%s"' % (file_nozzles, grams)
     if map_table:
         params += ' MAP_TABLE="%s"' % (map_table,)
@@ -64,6 +64,11 @@ class Issue30(unittest.TestCase):
         self.assert_printed(start("issue30-single", [0.4, 0.4, 0.4, 0.4], [0.4], {0, 1}))
         self.assert_refused(start("issue30-single-mismatch", [0.4, 0.8, 0.4, 0.4], [0.4], {0, 1}),
                             "f1_0.4 != e1_0.8")
+
+    def test_a_tool_at_the_usage_threshold_is_unused_as_in_the_rest_of_the_start(self):
+        # the firmware marks a tool used only above 0.0001; exactly 0.0001 on head 3 (0.8) is not checked
+        self.assert_printed(start("issue30-threshold", [0.4, 0.4, 0.4, 0.8], [0.4, 0.4, 0.4, 0.4], {0},
+                                  grams=[1.5, 0.0, 0.0, 0.0001]))
 
     def test_uniform_heads_print_as_before(self):
         self.assert_printed(start("issue30-uniform", [0.4, 0.4, 0.4, 0.4], [0.4, 0.4, 0.4, 0.4], {0, 1, 2, 3}))
