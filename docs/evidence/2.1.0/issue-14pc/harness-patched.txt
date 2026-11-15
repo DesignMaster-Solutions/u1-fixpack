@@ -1,0 +1,31 @@
+Checking patch klippy/extras/print_task_config.py...
+Applied patch klippy/extras/print_task_config.py cleanly.
+Checking patch klippy/extras/filament_parameters.py...
+Applied patch klippy/extras/filament_parameters.py cleanly.
+Checking patch klippy/extras/fan.py...
+Checking patch klippy/extras/fan_generic.py...
+Checking patch klippy/extras/virtual_sdcard.py...
+Checking patch klippy/kinematics/extruder.py...
+Applied patch klippy/extras/fan.py cleanly.
+Applied patch klippy/extras/fan_generic.py cleanly.
+Applied patch klippy/extras/virtual_sdcard.py cleanly.
+Applied patch klippy/kinematics/extruder.py cleanly.
+Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+Checking patch klippy/extras/exclude_object.py...
+Applied patch klippy/extras/exclude_object.py cleanly.
+Checking patch klippy/extras/print_task_config.py...
+Hunk #1 succeeded at 1266 (offset 11 lines).
+Hunk #2 succeeded at 1278 (offset 11 lines).
+Hunk #3 succeeded at 1426 (offset 11 lines).
+Applied patch klippy/extras/print_task_config.py cleanly.
+test_other_nozzles_unchanged (test_issue14pc.Issue14Pc.test_other_nozzles_unchanged) ... ok
+test_pctg_prints_on_02 (test_issue14pc.Issue14Pc.test_pctg_prints_on_02) ... ok
+test_petg_and_pla_print_on_02_as_before (test_issue14pc.Issue14Pc.test_petg_and_pla_print_on_02_as_before) ... ok
+test_polycarbonates_stay_refused_on_02 (test_issue14pc.Issue14Pc.test_polycarbonates_stay_refused_on_02) ... ok
+test_the_rest_of_the_02_list_stays_refused (test_issue14pc.Issue14Pc.test_the_rest_of_the_02_list_stays_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK

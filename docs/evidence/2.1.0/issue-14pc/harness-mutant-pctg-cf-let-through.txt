@@ -1,0 +1,20 @@
+Checking patch klippy/extras/filament_parameters.py...
+Applied patch klippy/extras/filament_parameters.py cleanly.
+test_other_nozzles_unchanged (test_issue14pc.Issue14Pc.test_other_nozzles_unchanged) ... ok
+test_pctg_prints_on_02 (test_issue14pc.Issue14Pc.test_pctg_prints_on_02) ... ok
+test_petg_and_pla_print_on_02_as_before (test_issue14pc.Issue14Pc.test_petg_and_pla_print_on_02_as_before) ... ok
+test_polycarbonates_stay_refused_on_02 (test_issue14pc.Issue14Pc.test_polycarbonates_stay_refused_on_02) ... ok
+test_the_rest_of_the_02_list_stays_refused (test_issue14pc.Issue14Pc.test_the_rest_of_the_02_list_stays_refused) ... FAIL
+
+======================================================================
+FAIL: test_the_rest_of_the_02_list_stays_refused (test_issue14pc.Issue14Pc.test_the_rest_of_the_02_list_stays_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue14pc.py", line 42, in test_the_rest_of_the_02_list_stays_refused
+    self.assertFalse(allowed(t), t)
+AssertionError: True is not false : PCTG-CF
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+FAILED (failures=1)

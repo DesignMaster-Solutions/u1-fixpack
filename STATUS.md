@@ -237,6 +237,17 @@
 - **Limits:** batch mode, no printer with mixed nozzles; Moonraker's footer parsing and
   auto-replenish not exercised. Upstream draft PR Snapmaker/u1-klipper#31.
 
+## M5: PCTG refused on the 0.2 nozzle (found while reading Snapmaker/u1-klipper#14)
+
+- **Cause:** `is_allow_to_print()` in `filament_parameters.py` refuses every main type that starts
+  with `PC` on a 0.2 mm nozzle; `PCTG` is not in `FORBIDDEN_FILAMENT_TYPES_02` but matches the prefix.
+- **Patch:** `patches/0014-pctg-allowed-on-02-nozzle.patch` (+3/-1): the prefix no longer matches `PCTG*`.
+- **Proof:** `tests/test_issue14pc.py` calls the firmware's own function: stock 1 of 5 red, patched 5
+  green, mutants red (`14pc-pc-prefix-dropped`, `14pc-pctg-cf-let-through`). Evidence in
+  `docs/evidence/2.1.0/issue-14pc/`.
+- **Limits:** function level, not a print start; no U1, so nothing about how PCTG prints through
+  0.2. Does not touch the 220 C calibration temperature of #14. Upstream draft PR Snapmaker/u1-klipper#32.
+
 ## Remaining
 
 - Physical U1 validation remains to be done before offering the patches upstream.

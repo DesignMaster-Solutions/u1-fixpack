@@ -1,0 +1,18 @@
+test_other_nozzles_unchanged (test_issue14pc.Issue14Pc.test_other_nozzles_unchanged) ... ok
+test_pctg_prints_on_02 (test_issue14pc.Issue14Pc.test_pctg_prints_on_02) ... FAIL
+test_petg_and_pla_print_on_02_as_before (test_issue14pc.Issue14Pc.test_petg_and_pla_print_on_02_as_before) ... ok
+test_polycarbonates_stay_refused_on_02 (test_issue14pc.Issue14Pc.test_polycarbonates_stay_refused_on_02) ... ok
+test_the_rest_of_the_02_list_stays_refused (test_issue14pc.Issue14Pc.test_the_rest_of_the_02_list_stays_refused) ... ok
+
+======================================================================
+FAIL: test_pctg_prints_on_02 (test_issue14pc.Issue14Pc.test_pctg_prints_on_02)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/fixpack/tests/test_issue14pc.py", line 30, in test_pctg_prints_on_02
+    self.assertTrue(allowed("PCTG"))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+FAILED (failures=1)
