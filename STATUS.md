@@ -229,7 +229,7 @@
   own entry, on the head `extruder_map_table` gives. A tool without an entry keeps the first entry
   (today's behaviour), so no file that starts today is refused. The issue suggests
   refusing a missing entry instead; left as a question on the PR.
-- **Proof:** `tests/test_issue30.py`, 6 tests: stock 3 red, patched 6 green, mutants red
+- **Proof:** `tests/test_issue30.py`, 7 tests (7th from the #31 review: a tool at exactly 0.0001 g is unused): stock 3 red, patched 7 green, mutants red
   (`30-read-by-head`, `30-no-single-value-fallback`, `30-still-first-entry`). Applies to 93cb12f too
   (CI runs both). Evidence in `docs/evidence/2.1.0/issue-30/`.
 - **Harness:** `FIXPACK_START_PARAMS` makes `fixpack_ui` start the job with the metadata on the
