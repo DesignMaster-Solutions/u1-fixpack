@@ -129,6 +129,17 @@ from the child). Not checked: the import dialog itself, and Windows. For the com
 also needs `"type": "process"`, and that project's `wipe_tower_filament = 0` had to be removed
 (the 2.4.1 CLI exits 139 with it; the desktop app opens the same project fine).
 
+## Fixes offered in u1-moonraker
+
+The U1 also ships Snapmaker's fork of Moonraker. Three defects there are offered as pull requests
+on `Snapmaker/u1-moonraker`, each with the test in the PR. None was run on a printer.
+
+| Pull request | What U1 owners see | Proof |
+|---|---|---|
+| [u1-moonraker#11](https://github.com/Snapmaker/u1-moonraker/pull/11) (fixes [#4](https://github.com/Snapmaker/u1-moonraker/issues/4)) | The shipped `moonraker.conf` trusts `192.0.0.0/8`, sixteen million addresses that are mostly public, where the private range `192.168.0.0/16` was meant | one-line config change |
+| [u1-moonraker#12](https://github.com/Snapmaker/u1-moonraker/pull/12) (fixes [#2](https://github.com/Snapmaker/u1-moonraker/issues/2)) | A filament type with a space, such as `"PLA Matte";PLA`, is stored as `PLA Matte";PLA`: quotes were stripped from the ends of the whole value, not from each entry | the firmware's own `metadata.py` on the issue's value, before and after; 7 test cases, 3 red on main, 7 green |
+| [u1-moonraker#13](https://github.com/Snapmaker/u1-moonraker/pull/13) | Since firmware 1.6.0 a file sliced by Cura, or by any slicer outside the Orca family, gets no metadata at all: five keys added to `SUPPORTED_DATA` only have a parser in the PrusaSlicer class, so the script dies with `AttributeError` | a Cura file on main exits 255 with no JSON, on the branch exits 0 with metadata; 37 test cases, 7 red on main, 37 green |
+
 ## Read from the source, no patch
 
 Two open firmware issues had no answer and can be settled by reading the code. No patch is offered for
