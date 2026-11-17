@@ -61,6 +61,29 @@ class FlattenPresetTest(unittest.TestCase):
         rc, full = self.run_tool(lost)
         self.assertEqual((rc, full), (2, None))
 
+    def test_project_with_only_project_settings_like_u1convert_writes(self):
+        # Snapmaker/OrcaSlicer#1207, second report: no process_settings_N.config in the 3mf
+        proj = os.path.join(self.dir.name, "conv-U1.3mf")
+        with zipfile.ZipFile(proj, "w") as z:
+            z.writestr("Metadata/project_settings.config", json.dumps({
+                "name": "project_settings", "from": "project", "print_settings_id": "0.24mm conv",
+                "printer_settings_id": "Snapmaker U1 (0.4 nozzle)", "filament_settings_id": ["PLA"],
+                "print_compatible_printers": ["Bambu Lab X1 0.4 nozzle"], "inherits_group": ["", "", ""],
+                "layer_height": "0.24", "brim_type": "auto_brim", "nozzle_temperature": ["220"]}))
+        saved = os.path.join(self.dir.name, "saved.json")
+        # saved while the project still had another file name
+        json.dump(dict(SAVED, inherits="0.24mm conv(before-rename.3mf)"), open(saved, "w"))
+        out = os.path.join(self.dir.name, "o.json")
+        self.assertEqual(flatten_preset.main([proj, saved, "-o", out]), 0)
+        full = json.load(open(out))
+        self.assertEqual((full["layer_height"], full["brim_type"], full["inherits"], full["print_settings_id"]),
+                         ("0.24", "no_brim", "", "TEST"))
+        self.assertNotIn("nozzle_temperature", full)  # filament key stays out of a process preset
+        self.assertNotIn("filament_settings_id", full)
+        self.assertEqual(full["compatible_printers"], ["Snapmaker U1 (0.4 nozzle)"])
+        json.dump(dict(SAVED, inherits="some other preset(x.3mf)"), open(saved, "w"))
+        self.assertEqual(flatten_preset.main([proj, saved, "-o", out]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

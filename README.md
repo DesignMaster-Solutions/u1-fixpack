@@ -129,6 +129,14 @@ from the child). Not checked: the import dialog itself, and Windows. For the com
 also needs `"type": "process"`, and that project's `wipe_tower_filament = 0` had to be removed
 (the 2.4.1 CLI exits 139 with it; the desktop app opens the same project fine).
 
+A project written by a converter (U1convert) or an older slicer has no `process_settings_N.config`,
+only the merged `project_settings.config`. The slicer builds the Project-inside preset from it and
+names it `<print_settings_id>(<file name>)`; the tool does the same, taking the process keys
+(`Preset::print_options()` of 2.4.1), and accepts the project under a new file name. Checked on the
+second project from the issue: 316 keys out. A key the project does not carry takes the slicer
+default on import. A preset whose parent is a system preset needs none of this: that parent ships
+with the slicer.
+
 ## Fixes offered in u1-moonraker
 
 The U1 also ships Snapmaker's fork of Moonraker. Three defects there are offered as pull requests
