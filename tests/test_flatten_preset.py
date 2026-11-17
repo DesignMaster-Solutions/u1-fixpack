@@ -84,6 +84,29 @@ class FlattenPresetTest(unittest.TestCase):
         json.dump(dict(SAVED, inherits="some other preset(x.3mf)"), open(saved, "w"))
         self.assertEqual(flatten_preset.main([proj, saved, "-o", out]), 2)
 
+    def test_system_parent_is_resolved_from_the_slicer_folder(self):
+        # second case of Snapmaker/OrcaSlicer#1207: the parent ships with the slicer and may be renamed later
+        sysdir = os.path.join(self.dir.name, "process")
+        os.mkdir(sysdir)
+        for d in ({"name": "fdm_common", "from": "system", "instantiation": "false", "layer_height": "0.2",
+                   "wall_loops": "2"},
+                  {"name": "0.20mm Standard @Snapmaker U1 (0.4 nozzle)", "inherits": "fdm_common",
+                   "from": "system", "instantiation": "true", "setting_id": "GP004", "wall_loops": "3",
+                   "compatible_printers": ["Snapmaker U1 (0.4 nozzle)"]}):
+            with open(os.path.join(sysdir, d["name"] + ".json"), "w", encoding="utf-8-sig") as f:  # real files have a BOM
+                json.dump(d, f)
+        saved = os.path.join(self.dir.name, "saved.json")
+        json.dump(dict(SAVED, inherits="0.20mm Standard @Snapmaker U1 (0.4 nozzle)"), open(saved, "w"))
+        out = os.path.join(self.dir.name, "o.json")
+        self.assertEqual(flatten_preset.main(["--system", sysdir, saved, "-o", out]), 0)
+        full = json.load(open(out))
+        self.assertEqual((full["layer_height"], full["wall_loops"], full["brim_type"], full["inherits"], full["from"]),
+                         ("0.2", "3", "no_brim", "", "User"))
+        self.assertEqual((full["name"], full["instantiation"]), ("TEST", "true"))
+        self.assertNotIn("setting_id", full)  # the system preset id must not ride along under a user name
+        self.assertEqual(full["compatible_printers"], ["Snapmaker U1 (0.4 nozzle)"])
+        self.assertEqual(flatten_preset.main([saved, "-o", out]), 2)  # no folder given: says how to pass it
+
 
 if __name__ == "__main__":
     unittest.main()

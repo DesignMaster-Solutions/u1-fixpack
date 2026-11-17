@@ -9,6 +9,8 @@ from the presets embedded in the .3mf and writes one JSON with every key and no 
     python3 flatten_preset.py project.3mf                      # lists the presets inside
     python3 flatten_preset.py project.3mf "Preset name"        # a preset stored in the 3mf
     python3 flatten_preset.py project.3mf saved_user_preset.json   # the partial file from AppData
+    python3 flatten_preset.py --system <slicer>/system/Snapmaker/process saved_user_preset.json
+                                                               # parent is a system preset: freeze a full copy
 
 Then in the slicer: File > Import > Import Configs, and pick the written file.
 """
@@ -152,7 +154,8 @@ def flatten(leaf, presets):
         parent = chain[-1]["inherits"]
         if parent not in presets:
             raise KeyError(f'parent preset "{parent}" is not inside this 3mf. If it is a system preset '
-                           "(it ships with the slicer), the saved file already works in any project; "
+                           "(it ships with the slicer), the saved file already works in any project, and "
+                           "--system <slicer process folder> makes a copy that no longer depends on it; "
                            "otherwise pass the project the preset was first saved from")
         if parent in seen:
             raise ValueError(f'inheritance loop at "{parent}"')
@@ -165,6 +168,8 @@ def flatten(leaf, presets):
         # a parent's own id (a string equal to its name) must not survive under the child's name
         if k not in leaf and isinstance(full.get(k), str):
             full[k] = leaf["name"]
+    if "setting_id" not in leaf:
+        full.pop("setting_id", None)  # a system parent's id (GP004...) is not this preset's
     full["inherits"] = ""
     full["from"] = "User"
     return full
@@ -172,7 +177,10 @@ def flatten(leaf, presets):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("project", help=".3mf that holds the parent preset")
+    ap.add_argument("project", help=".3mf that holds the parent preset (leave it out when the parent is a system preset)")
+    ap.add_argument("--system", metavar="DIR",
+                    help="folder with the slicer\x27s own process presets, for a preset whose parent ships with "
+                         "the slicer, e.g. %%AppData%%\\\\Snapmaker_Orca\\\\system\\\\Snapmaker\\\\process")
     ap.add_argument("preset", nargs="?", help="preset name inside the 3mf, or a saved preset .json")
     ap.add_argument("-o", "--out", help="output file (default: <preset name>.json)")
     ap.add_argument("--printer", action="append",
@@ -180,16 +188,23 @@ def main(argv=None):
                          'Repeat for more than one, or pass "" to keep the parent\'s list')
     a = ap.parse_args(argv)
 
-    presets = embedded_presets(a.project)
-    built = project_process_preset(a.project)
+    if a.project.lower().endswith(".json") and not a.preset:  # only a saved preset: its parent is a system one
+        a.project, a.preset = None, a.project
+    presets = embedded_presets(a.project) if a.project else {}
+    built = project_process_preset(a.project) if a.project else None
     if built:
         presets.setdefault(*built)
+    for fn in sorted(os.listdir(a.system)) if a.system else ():
+        if fn.lower().endswith(".json"):
+            with open(os.path.join(a.system, fn), encoding="utf-8-sig") as f:  # the shipped files carry a BOM
+                d = json.load(f)
+            presets.setdefault(d.get("name"), d)
     if not a.preset:
         for name, d in presets.items():
             print(f'{name}   (inherits: {d.get("inherits") or "-"})')
         return 0
     if a.preset.lower().endswith(".json"):
-        with open(a.preset, encoding="utf-8") as f:
+        with open(a.preset, encoding="utf-8-sig") as f:
             leaf = json.load(f)
     elif a.preset in presets:
         leaf = presets[a.preset]
@@ -207,7 +222,7 @@ def main(argv=None):
 
     # A converted parent often still lists the printers it came from (e.g. Bambu Lab X1),
     # and a standalone preset with that list is hidden on the U1.
-    printers = a.printer if a.printer is not None else [project_printer(a.project)]
+    printers = a.printer if a.printer is not None else [project_printer(a.project) if a.project else None]
     printers = [p for p in printers if p]
     if printers and "compatible_printers" in full:
         full["compatible_printers"] = printers

@@ -119,6 +119,7 @@ and writes one preset with every key and no parent:
 ```
 python3 tools/flatten_preset.py project.3mf                       # lists the presets inside
 python3 tools/flatten_preset.py project.3mf saved_preset.json     # the partial file from AppData
+python3 tools/flatten_preset.py --system <slicer>/system/Snapmaker/process saved_preset.json   # parent is a system preset: full copy that survives a rename
 ```
 
 Then File > Import > Import Configs. `compatible_printers` is set to the project's printer, because
