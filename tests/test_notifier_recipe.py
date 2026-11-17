@@ -21,6 +21,9 @@ except ImportError:  # the Docker image has the firmware only
     apprise = None
 
 BODY = "U1 {event_name}: {event_args[1].filename}"  # same line as docs/alarm-on-pause.md
+# The debounced variant (a runout the U1 refills on its own must not ring): body that also renders for
+# the remote call, which arrives with event_args == [].
+BODY2 = "U1 {event_name} {event_message}{event_args[1].filename if event_args else \"\"}"
 
 
 @unittest.skipIf(apprise is None, "needs apprise and jinja2")
@@ -58,6 +61,55 @@ class NotifierRecipe(unittest.TestCase):
         msg = json.loads(raw)
         self.assertEqual((msg["topic"], msg["message"]), ("u1-alarm", body))
         self.assertEqual(headers.get("X-Priority"), "max")
+
+
+def _watch_template():
+    """The gcode of [delayed_gcode night_alarm_watch], cut out of the doc."""
+    with open("docs/alarm-on-pause.md") as f:
+        doc = f.read()
+    start = doc.index("[delayed_gcode night_alarm_watch]")
+    block = doc[start:doc.index("```", start)]
+    return block.split("gcode:\n", 1)[1]
+
+
+@unittest.skipIf(apprise is None, "needs apprise and jinja2")
+class DebouncedAlarm(unittest.TestCase):
+    """Runs the watch macro tick by tick with Klipper's template delimiters and a recorded remote call."""
+
+    def run_ticks(self, states):
+        env = jinja2.Environment("{%", "%}", "{", "}")
+        tpl = env.from_string(_watch_template())
+        ticks, calls = 0, []
+        for state in states:
+            printer = {"print_stats": {"state": state, "filename": "benchy.gcode"},
+                       "gcode_macro NIGHT_ALARM": {"paused_ticks": ticks}}
+            out = tpl.render(printer=printer,
+                             action_call_remote_method=lambda m, **kw: calls.append((m, kw)) or "")
+            sets = [l for l in out.splitlines() if "SET_GCODE_VARIABLE" in l]
+            self.assertEqual(len(sets), 1, out)
+            ticks = int(sets[0].rsplit("VALUE=", 1)[1])
+            self.assertIn("UPDATE_DELAYED_GCODE ID=night_alarm_watch DURATION=30", out)
+        return calls
+
+    def test_refill_that_resumes_does_not_ring(self):
+        self.assertEqual(self.run_ticks(["printing", "paused", "printing", "printing"]), [])
+
+    def test_pause_that_stays_rings_once(self):
+        calls = self.run_ticks(["printing", "paused", "paused", "paused", "paused"])
+        self.assertEqual(calls, [("notify", {"name": "night_alarm", "message": "still paused: benchy.gcode"})])
+
+    def test_second_pause_rings_again(self):
+        self.assertEqual(len(self.run_ticks(["paused", "paused", "printing", "paused", "paused"])), 2)
+
+    def test_body_renders_for_job_event_and_remote_call(self):
+        env = jinja2.Environment("{%", "%}", "{", "}")
+        with open("docs/alarm-on-pause.md") as f:
+            self.assertIn("body: " + BODY2, f.read())
+        t = env.from_string(BODY2)
+        self.assertEqual(t.render(event_name="error", event_args=[{}, {"filename": "a.gcode"}], event_message=""),
+                         "U1 error a.gcode")
+        self.assertEqual(t.render(event_name="remote_action", event_args=[], event_message="still paused: a.gcode"),
+                         "U1 remote_action still paused: a.gcode")
 
 
 if __name__ == "__main__":
