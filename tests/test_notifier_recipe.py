@@ -72,34 +72,85 @@ def _watch_template():
     return block.split("gcode:\n", 1)[1]
 
 
+def _macro_vars():
+    """variable_* defaults of [gcode_macro NIGHT_ALARM], cut out of the doc (Klipper literal_eval's them)."""
+    import ast
+    with open("docs/alarm-on-pause.md") as f:
+        doc = f.read()
+    start = doc.index("[gcode_macro NIGHT_ALARM]")
+    block = doc[start:doc.index("gcode:", start)]
+    return {l.split(":", 1)[0][len("variable_"):]: ast.literal_eval(l.split(":", 1)[1].strip())
+            for l in block.splitlines() if l.startswith("variable_")}
+
+
+def _print_stats(t, events):
+    """Klipper print_stats.get_status at time t (2.1.0 print_stats.py): print_duration freezes while
+    paused, total_duration keeps running. events = [(time, "pause"|"resume")], print starts at 0."""
+    paused_since, paused_total = None, 0.0
+    for when, ev in events:
+        if when > t:
+            break
+        if ev == "pause" and paused_since is None:
+            paused_since = when
+        elif ev == "resume" and paused_since is not None:
+            paused_total += when - paused_since
+            paused_since = None
+    cur = t - paused_since if paused_since is not None else 0.0
+    return {"state": "paused" if paused_since is not None else "printing", "filename": "benchy.gcode",
+            "total_duration": float(t), "print_duration": t - paused_total - cur}
+
+
 @unittest.skipIf(apprise is None, "needs apprise and jinja2")
 class DebouncedAlarm(unittest.TestCase):
-    """Runs the watch macro tick by tick with Klipper's template delimiters and a recorded remote call."""
+    """Runs the watch macro on virtual time with Klipper's template delimiters and a recorded remote call.
+    Not covered: real Klipper timers and how long a real U1 refill stays paused."""
 
-    def run_ticks(self, states):
+    def setUp(self):
+        self.wait = _macro_vars()["wait"]
+
+    def ring_times(self, events, end, phase=0.0):
         env = jinja2.Environment("{%", "%}", "{", "}")
         tpl = env.from_string(_watch_template())
-        ticks, calls = 0, []
-        for state in states:
-            printer = {"print_stats": {"state": state, "filename": "benchy.gcode"},
-                       "gcode_macro NIGHT_ALARM": {"paused_ticks": ticks}}
-            out = tpl.render(printer=printer,
-                             action_call_remote_method=lambda m, **kw: calls.append((m, kw)) or "")
-            sets = [l for l in out.splitlines() if "SET_GCODE_VARIABLE" in l]
-            self.assertEqual(len(sets), 1, out)
-            ticks = int(sets[0].rsplit("VALUE=", 1)[1])
-            self.assertIn("UPDATE_DELAYED_GCODE ID=night_alarm_watch DURATION=30", out)
-        return calls
+        v = _macro_vars()
+        calls, t = [], phase
+        while t <= end:
+            out = tpl.render(printer={"print_stats": _print_stats(t, events), "gcode_macro NIGHT_ALARM": dict(v)},
+                             action_call_remote_method=lambda m, **kw: calls.append((t, m, kw)) or "")
+            for l in out.splitlines():
+                if "SET_GCODE_VARIABLE" in l:
+                    var, val = l.split("VARIABLE=", 1)[1].split(" VALUE=")
+                    v[var] = float(val) if "." in val or "e" in val else int(val)
+            step = [l for l in out.splitlines() if "UPDATE_DELAYED_GCODE ID=night_alarm_watch" in l]
+            self.assertEqual(len(step), 1, out)
+            t += float(step[0].rsplit("DURATION=", 1)[1])
+        for _, m, kw in calls:
+            self.assertEqual((m, kw["name"]), ("notify", "night_alarm"))
+            self.assertIn("benchy.gcode", kw["message"])
+        return [c[0] for c in calls]
 
     def test_refill_that_resumes_does_not_ring(self):
-        self.assertEqual(self.run_ticks(["printing", "paused", "printing", "printing"]), [])
+        for phase in (0, 1.7, 4.9):
+            self.assertEqual(self.ring_times([(100, "pause"), (100 + self.wait - 6, "resume")], 600, phase), [])
 
-    def test_pause_that_stays_rings_once(self):
-        calls = self.run_ticks(["printing", "paused", "paused", "paused", "paused"])
-        self.assertEqual(calls, [("notify", {"name": "night_alarm", "message": "still paused: benchy.gcode"})])
+    def test_pause_that_stays_rings_once_after_the_wait(self):
+        for phase in (0, 1.7, 4.9):
+            rings = self.ring_times([(100, "pause")], 1000, phase)
+            self.assertEqual(len(rings), 1)
+            self.assertTrue(100 + self.wait <= rings[0] <= 100 + self.wait + 10, rings)
 
-    def test_second_pause_rings_again(self):
-        self.assertEqual(len(self.run_ticks(["paused", "paused", "printing", "paused", "paused"])), 2)
+    def test_resume_and_new_pause_between_two_looks_restarts_the_wait(self):
+        # ReplixCast 44319/7: pause seen, prints a moment between two looks, pauses again
+        # looks at 100.5 and 105.5: the resume at 101 and the pause at 103 fall between them
+        rings = self.ring_times([(100, "pause"), (101, "resume"), (103, "pause")], 1000, 0.5)
+        self.assertEqual(len(rings), 1)
+        self.assertGreaterEqual(rings[0], 103 + self.wait)
+
+    def test_second_pause_after_an_alarm_rings_again(self):
+        r = self.ring_times([(100, "pause")], 1000, 1.0)[0]
+        # resume and pause again between the look that rang and the next one
+        rings = self.ring_times([(100, "pause"), (r + 1, "resume"), (r + 3, "pause")], 2000, 1.0)
+        self.assertEqual(len(rings), 2)
+        self.assertGreaterEqual(rings[1], r + 3 + self.wait)
 
     def test_body_renders_for_job_event_and_remote_call(self):
         env = jinja2.Environment("{%", "%}", "{", "}")
